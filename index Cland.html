@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clandestino Cookies — Ficha Técnica & Precificação</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ECE7DC;
+    --paper:#F7F3EA;
+    --ink:#161412;
+    --ink2:#4A453D;
+    --line:#161412;
+    --hair:rgba(22,20,18,.14);
+    --red:#C2341D;
+    --green:#1E6F4C;
+    --gold:#B98A2E;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);font-family:'Work Sans',sans-serif;font-size:15px;line-height:1.55}
+  body{padding:0 0 80px}
+  h1,h2,h3,.disp{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.04em;font-weight:600}
+  .mono{font-family:'JetBrains Mono',monospace}
+  button{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.06em;cursor:pointer}
+  input,select{font-family:'Work Sans',sans-serif;font-size:14px}
+
+  /* HEADER */
+  header{background:var(--ink);color:var(--paper);padding:18px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-bottom:4px solid var(--red)}
+  .brand{display:flex;flex-direction:column;line-height:1}
+  .brand .big{font-family:'Oswald';font-weight:700;font-size:30px;letter-spacing:.06em}
+  .brand .sub{font-family:'Oswald';font-weight:500;font-size:11px;letter-spacing:.55em;background:var(--paper);color:var(--ink);padding:2px 6px;margin-top:5px;align-self:flex-start}
+  header .tag{font-family:'Oswald';font-size:12px;letter-spacing:.14em;color:#cdbfae;text-align:right}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:24px}
+
+  /* GLOBAL COSTS BAR */
+  .costs{background:var(--ink);color:var(--paper);border-radius:4px;padding:16px 20px;margin-bottom:24px}
+  .costs h2{font-size:16px;color:var(--paper);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .costs h2 .dot{width:9px;height:9px;background:var(--red);display:inline-block}
+  .cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+  .cgrid label{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#bcae9c;font-family:'Oswald';margin-bottom:5px}
+  .cgrid input{width:100%;padding:8px 10px;border:1px solid #3a352d;background:#221f1a;color:var(--paper);border-radius:3px}
+  .cgrid input:focus{outline:none;border-color:var(--red)}
+  .cnote{margin-top:12px;font-size:13px;color:#cdbfae}
+  .cnote b{color:var(--paper)}
+
+  /* LAYOUT */
+  .layout{display:grid;grid-template-columns:260px 1fr;gap:24px;align-items:start}
+  @media(max-width:820px){.layout{grid-template-columns:1fr}}
+
+  /* SIDEBAR */
+  .side{background:var(--paper);border:1.5px solid var(--line);border-radius:4px;overflow:hidden}
+  .side .head{background:var(--ink);color:var(--paper);padding:10px 14px;font-family:'Oswald';font-size:14px;letter-spacing:.1em;text-transform:uppercase}
+  .flist{list-style:none}
+  .flist li{padding:12px 14px;border-bottom:1px solid var(--hair);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .flist li:hover{background:#efe9dc}
+  .flist li.active{background:var(--ink);color:var(--paper)}
+  .flist li.active .fp{color:#cdbfae}
+  .fn{font-family:'Oswald';font-weight:600;text-transform:uppercase;letter-spacing:.03em;font-size:14px}
+  .fp{font-size:12px;color:var(--ink2);font-family:'JetBrains Mono'}
+  .empty{padding:18px 14px;color:var(--ink2);font-size:13px}
+  .newbtn{width:100%;padding:12px;border:none;background:var(--red);color:#fff;font-size:13px;letter-spacing:.1em}
+  .newbtn:hover{background:#a82c18}
+
+  /* MAIN CARD */
+  .card{background:var(--paper);border:1.5px solid var(--line);border-radius:4px;padding:0;overflow:hidden}
+  .cardpad{padding:22px}
+  .titlebar{display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px solid var(--line);padding:16px 22px;background:#efe9dc}
+  .titlebar input.name{font-family:'Oswald';font-weight:700;text-transform:uppercase;letter-spacing:.04em;font-size:22px;border:none;background:transparent;color:var(--ink);width:60%}
+  .titlebar input.name:focus{outline:none;border-bottom:2px solid var(--red)}
+  .del{background:transparent;border:1.5px solid var(--line);color:var(--ink);padding:6px 12px;font-size:11px;border-radius:3px}
+  .del:hover{background:var(--ink);color:var(--paper)}
+
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+  .field label{display:block;font-family:'Oswald';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);margin-bottom:5px}
+  .field input{width:100%;padding:9px 10px;border:1px solid var(--hair);background:#fff;border-radius:3px}
+  .field input:focus{outline:none;border-color:var(--ink)}
+
+  .sectionlabel{font-family:'Oswald';font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin:24px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--line);display:flex;justify-content:space-between;align-items:flex-end}
+
+  table{width:100%;border-collapse:collapse}
+  thead th{font-family:'Oswald';font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);text-align:left;padding:6px 6px;border-bottom:1px solid var(--hair)}
+  thead th.r{text-align:right}
+  tbody td{padding:4px 4px;border-bottom:1px solid var(--hair)}
+  tbody input{width:100%;padding:6px 7px;border:1px solid transparent;background:transparent;border-radius:3px;font-size:14px}
+  tbody input:focus{outline:none;border-color:var(--ink);background:#fff}
+  tbody input.num{text-align:right;font-family:'JetBrains Mono';font-size:13px}
+  td.cost{text-align:right;font-family:'JetBrains Mono';font-weight:600;font-size:13px;white-space:nowrap;padding-right:6px}
+  td.x{width:30px;text-align:center}
+  .xbtn{background:transparent;border:none;color:var(--ink2);font-size:16px;line-height:1;padding:2px 6px}
+  .xbtn:hover{color:var(--red)}
+  .addrow{margin-top:8px;background:transparent;border:1.5px dashed var(--line);color:var(--ink);padding:8px 14px;font-size:11px;border-radius:3px}
+  .addrow:hover{background:var(--ink);color:var(--paper)}
+  .subtotal{display:flex;justify-content:space-between;padding:10px 6px;border-top:2px solid var(--line);margin-top:4px;font-family:'Oswald';text-transform:uppercase;letter-spacing:.06em;font-size:14px}
+  .subtotal .v{font-family:'JetBrains Mono';font-weight:600}
+
+  /* PRICING */
+  .pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:14px;margin-bottom:6px}
+  .pgrid .field input{font-family:'JetBrains Mono';text-align:right}
+  .results{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px}
+  @media(max-width:560px){.results{grid-template-columns:1fr}.row2{grid-template-columns:1fr}}
+  .res{border:1.5px solid var(--line);border-radius:4px;padding:14px 16px}
+  .res .lab{font-family:'Oswald';font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);margin-bottom:6px}
+  .res .num{font-family:'JetBrains Mono';font-weight:600;font-size:26px}
+  .res.cost{background:#efe9dc}
+  .res.price{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .res.price .lab{color:#cdbfae}
+  .res.profit{background:var(--green);color:#fff;border-color:var(--green)}
+  .res.profit .lab{color:#cfe6da}
+  .warn{margin-top:14px;color:var(--red);font-weight:600;font-size:14px;display:none}
+  .pnote{margin-top:14px;font-size:13px;color:var(--ink2)}
+  .pnote b{color:var(--ink)}
+
+  .nofile{padding:60px 22px;text-align:center;color:var(--ink2)}
+  .nofile .big{font-family:'Oswald';font-size:18px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink);margin-bottom:8px}
+
+  footer{max-width:1180px;margin:30px auto 0;padding:0 24px;font-size:12px;color:var(--ink2);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  footer button{background:transparent;border:1px solid var(--hair);color:var(--ink2);padding:6px 12px;border-radius:3px;font-size:11px}
+  footer button:hover{border-color:var(--ink);color:var(--ink)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="big">CLANDESTINO</span>
+    <span class="sub">COOKIES</span>
+  </div>
+  <div class="tag">FICHA TÉCNICA<br>&amp; PRECIFICAÇÃO</div>
+</header>
+
+<div class="wrap">
+
+  <!-- GLOBAL MONTHLY COSTS -->
+  <div class="costs">
+    <h2><span class="dot"></span>Custos do mês — diluídos por cookie</h2>
+    <div class="cgrid">
+      <div><label>Salários de produção (R$)</label><input id="g_sal" type="number" step="0.01" value="2500"></div>
+      <div><label>Custos fixos + seu salário (R$)</label><input id="g_fix" type="number" step="0.01" value="2500"></div>
+      <div><label>Cookies vendidos / mês</label><input id="g_vol" type="number" step="1" value="2000"></div>
+    </div>
+    <div class="cnote" id="g_note"></div>
+  </div>
+
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <div class="side">
+      <div class="head">Fichas / Sabores</div>
+      <ul class="flist" id="flist"></ul>
+      <button class="newbtn" id="newficha">+ Nova ficha</button>
+    </div>
+
+    <!-- MAIN -->
+    <div class="card" id="editor"></div>
+  </div>
+
+  <footer>
+    <span>Dados salvos no seu navegador (este computador). Faça backup com Exportar.</span>
+    <span>
+      <button id="export">Exportar JSON</button>
+      <button id="importbtn">Importar JSON</button>
+      <input type="file" id="importfile" accept="application/json" style="display:none">
+    </span>
+  </footer>
+</div>
+
+<script>
+const STORE='clandestino_v1';
+const fmt=n=>'R$ '+(Number(n)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmt2=n=>(Number(n)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const uid=()=>Math.random().toString(36).slice(2,9);
+
+function defaultPricing(){return{perdas:5,imposto:6,cartao:3,delivery:0,lucro:30};}
+function seed(){
+  return {
+    global:{sal:2500,fix:2500,vol:2000},
+    fichas:[{
+      id:uid(),nome:'Cookie Nutella 70g',rendimento:30,peso:70,
+      ingredientes:[
+        {nome:'Manteiga Extra S/Sal',qtd:371,emb:200,preco:18.00},
+        {nome:'Açúcar Refinado',qtd:154,emb:1000,preco:5.50},
+        {nome:'Açúcar Mascavo',qtd:98,emb:1000,preco:9.00},
+        {nome:'Ovo',qtd:112,emb:60,preco:0.70},
+        {nome:'Farinha de Trigo',qtd:623,emb:1000,preco:6.00},
+        {nome:'Bicarbonato',qtd:7,emb:100,preco:4.00},
+        {nome:'Fermento',qtd:7,emb:100,preco:5.00},
+        {nome:'Sal',qtd:7,emb:1000,preco:3.00},
+        {nome:'Choc. Gotas Ao Leite',qtd:290,emb:1010,preco:38.00},
+        {nome:'Choc. Gotas 40%',qtd:145,emb:1010,preco:42.00},
+        {nome:'Choc. Gotas Blend',qtd:290,emb:1010,preco:40.00},
+        {nome:'Recheio Nutella',qtd:450,emb:650,preco:25.00},
+        {nome:'Cobertura Choc. Chips',qtd:600,emb:1010,preco:36.00},
+        {nome:'Embalagem (saco+luva+papel)',qtd:30,emb:1,preco:0.24}
+      ],
+      pricing:defaultPricing()
+    }],
+    sel:null
+  };
+}
+let db=load();
+if(!db.sel && db.fichas.length) db.sel=db.fichas[0].id;
+
+function load(){try{const r=localStorage.getItem(STORE);if(r)return JSON.parse(r);}catch(e){}return seed();}
+function save(){try{localStorage.setItem(STORE,JSON.stringify(db));}catch(e){}}
+
+function perCookieOverhead(){
+  const v=Number(db.global.vol)||1;
+  return {mo:(Number(db.global.sal)||0)/v, cf:(Number(db.global.fix)||0)/v};
+}
+function ficha(){return db.fichas.find(f=>f.id===db.sel);}
+function ingCost(i){const emb=Number(i.emb)||0;if(emb<=0)return 0;return (Number(i.qtd)||0)/emb*(Number(i.preco)||0);}
+function mpTotal(f){return f.ingredientes.reduce((s,i)=>s+ingCost(i),0);}
+function mpPerCookie(f){const r=Number(f.rendimento)||1;return mpTotal(f)/r;}
+
+/* ---- RENDER GLOBAL ---- */
+function renderGlobal(){
+  document.getElementById('g_sal').value=db.global.sal;
+  document.getElementById('g_fix').value=db.global.fix;
+  document.getElementById('g_vol').value=db.global.vol;
+  const o=perCookieOverhead();
+  document.getElementById('g_note').innerHTML=
+    'Mão de obra por cookie: <b>'+fmt(o.mo)+'</b> &nbsp;·&nbsp; Custos fixos por cookie: <b>'+fmt(o.cf)+'</b> &nbsp;·&nbsp; Some isso à matéria-prima de cada ficha.';
+}
+['g_sal','g_fix','g_vol'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',e=>{
+    const k=id==='g_sal'?'sal':id==='g_fix'?'fix':'vol';
+    db.global[k]=parseFloat(e.target.value)||0;
+    save();renderGlobal();renderEditor();
+  });
+});
+
+/* ---- RENDER SIDEBAR ---- */
+function renderList(){
+  const ul=document.getElementById('flist');ul.innerHTML='';
+  if(!db.fichas.length){ul.innerHTML='<div class="empty">Nenhuma ficha ainda. Crie a primeira.</div>';return;}
+  db.fichas.forEach(f=>{
+    const o=perCookieOverhead();
+    const preco=calcPrice(f).preco;
+    const li=document.createElement('li');
+    if(f.id===db.sel)li.className='active';
+    li.innerHTML='<span class="fn">'+(f.nome||'Sem nome')+'</span><span class="fp">'+(isFinite(preco)?fmt(preco):'—')+'</span>';
+    li.onclick=()=>{db.sel=f.id;save();renderAll();};
+    ul.appendChild(li);
+  });
+}
+
+/* ---- PRICING MATH ---- */
+function calcPrice(f){
+  const o=perCookieOverhead();
+  const base=mpPerCookie(f)+o.mo+o.cf;
+  const p=f.pricing;
+  const ef=base/(1-(Number(p.perdas)||0)/100);
+  const perc=((Number(p.imposto)||0)+(Number(p.cartao)||0)+(Number(p.delivery)||0)+(Number(p.lucro)||0))/100;
+  if(perc>=1)return{base,ef,preco:NaN,lucro:NaN,invalid:true,markup:NaN};
+  const preco=ef/(1-perc);
+  const lucro=preco*(Number(p.lucro)||0)/100;
+  const markup=mpPerCookie(f)>0?preco/mpPerCookie(f):0;
+  return{base,ef,preco,lucro,invalid:false,markup};
+}
+
+/* ---- RENDER EDITOR ---- */
+function renderEditor(){
+  const el=document.getElementById('editor');
+  const f=ficha();
+  if(!f){el.innerHTML='<div class="nofile"><div class="big">Selecione ou crie uma ficha</div><div>Cadastre os ingredientes e a precificação aparece sozinha.</div></div>';return;}
+  const o=perCookieOverhead();
+  const r=calcPrice(f);
+
+  let rows='';
+  f.ingredientes.forEach((i,idx)=>{
+    rows+='<tr>'+
+      '<td><input data-k="nome" data-i="'+idx+'" value="'+(i.nome||'').replace(/"/g,'&quot;')+'" placeholder="ingrediente"></td>'+
+      '<td><input class="num" data-k="qtd" data-i="'+idx+'" type="number" step="0.01" value="'+i.qtd+'"></td>'+
+      '<td><input class="num" data-k="emb" data-i="'+idx+'" type="number" step="0.01" value="'+i.emb+'"></td>'+
+      '<td><input class="num" data-k="preco" data-i="'+idx+'" type="number" step="0.01" value="'+i.preco+'"></td>'+
+      '<td class="cost">'+fmt(ingCost(i))+'</td>'+
+      '<td class="x"><button class="xbtn" data-del="'+idx+'" title="remover">×</button></td>'+
+    '</tr>';
+  });
+
+  el.innerHTML=
+  '<div class="titlebar">'+
+    '<input class="name" id="f_nome" value="'+(f.nome||'').replace(/"/g,'&quot;')+'">'+
+    '<button class="del" id="f_del">Excluir</button>'+
+  '</div>'+
+  '<div class="cardpad">'+
+    '<div class="row2">'+
+      '<div class="field"><label>Rendimento (cookies por receita)</label><input id="f_rend" type="number" step="1" value="'+f.rendimento+'"></div>'+
+      '<div class="field"><label>Peso por cookie (g)</label><input id="f_peso" type="number" step="0.1" value="'+f.peso+'"></div>'+
+    '</div>'+
+
+    '<div class="sectionlabel"><span>Ingredientes</span><span style="font-family:Work Sans;text-transform:none;letter-spacing:0;font-weight:400;font-size:12px;color:var(--ink2)">qtd e embalagem na mesma unidade (g, ml, un)</span></div>'+
+    '<table><thead><tr>'+
+      '<th>Ingrediente</th><th class="r">Qtd usada</th><th class="r">Tam. embalagem</th><th class="r">Preço embalagem</th><th class="r">Custo</th><th></th>'+
+    '</tr></thead><tbody>'+rows+'</tbody></table>'+
+    '<button class="addrow" id="f_add">+ Adicionar ingrediente</button>'+
+
+    '<div class="subtotal"><span>Matéria-prima da receita</span><span class="v">'+fmt(mpTotal(f))+'</span></div>'+
+    '<div class="subtotal" style="border-top:1px solid var(--hair)"><span>+ Mão de obra ('+fmt(o.mo)+') &amp; fixos ('+fmt(o.cf)+') por cookie</span><span class="v">'+fmt(o.mo+o.cf)+'</span></div>'+
+    '<div class="subtotal"><span>Custo base por cookie</span><span class="v">'+fmt(r.base)+'</span></div>'+
+
+    '<div class="sectionlabel"><span>Precificação</span></div>'+
+    '<div class="pgrid">'+
+      '<div class="field"><label>Perdas %</label><input id="p_perdas" type="number" step="0.5" value="'+f.pricing.perdas+'"></div>'+
+      '<div class="field"><label>Imposto %</label><input id="p_imposto" type="number" step="0.5" value="'+f.pricing.imposto+'"></div>'+
+      '<div class="field"><label>Cartão %</label><input id="p_cartao" type="number" step="0.5" value="'+f.pricing.cartao+'"></div>'+
+      '<div class="field"><label>Delivery %</label><input id="p_delivery" type="number" step="1" value="'+f.pricing.delivery+'"></div>'+
+      '<div class="field"><label>Lucro %</label><input id="p_lucro" type="number" step="1" value="'+f.pricing.lucro+'"></div>'+
+    '</div>'+
+
+    '<div class="results">'+
+      '<div class="res cost"><div class="lab">Custo efetivo</div><div class="num">'+fmt(r.ef)+'</div></div>'+
+      '<div class="res price"><div class="lab">Preço de venda</div><div class="num">'+(r.invalid?'—':fmt(r.preco))+'</div></div>'+
+      '<div class="res profit"><div class="lab">Lucro / cookie</div><div class="num">'+(r.invalid?'—':fmt(r.lucro))+'</div></div>'+
+    '</div>'+
+    '<div class="warn" id="p_warn" style="display:'+(r.invalid?'block':'none')+'">Soma dos percentuais passou de 100%. Reduza margem ou taxas.</div>'+
+    (r.invalid?'':'<div class="pnote">Markup sobre matéria-prima: <b>'+fmt2(r.markup)+'×</b>. Vendendo abaixo de <b>'+fmt(r.ef)+'</b> você trabalha de graça.</div>')+
+  '</div>';
+
+  wireEditor();
+}
+
+function wireEditor(){
+  const f=ficha();if(!f)return;
+  const bind=(id,fn)=>{const e=document.getElementById(id);if(e)e.addEventListener('input',fn);};
+  bind('f_nome',e=>{f.nome=e.target.value;save();renderList();});
+  bind('f_rend',e=>{f.rendimento=parseFloat(e.target.value)||0;save();renderEditor();renderList();});
+  bind('f_peso',e=>{f.peso=parseFloat(e.target.value)||0;save();});
+  ['perdas','imposto','cartao','delivery','lucro'].forEach(k=>{
+    bind('p_'+k,e=>{f.pricing[k]=parseFloat(e.target.value)||0;save();renderEditor();renderList();});
+  });
+  document.querySelectorAll('#editor tbody input').forEach(inp=>{
+    inp.addEventListener('input',e=>{
+      const idx=+e.target.dataset.i,k=e.target.dataset.k;
+      f.ingredientes[idx][k]= k==='nome'? e.target.value : (parseFloat(e.target.value)||0);
+      save();
+      // live update only cost cell + subtotals without full rerender for smoothness on name; do full for numbers
+      if(k==='nome'){renderList();}else{renderEditor();}
+    });
+  });
+  document.querySelectorAll('#editor [data-del]').forEach(b=>{
+    b.onclick=()=>{f.ingredientes.splice(+b.dataset.del,1);save();renderEditor();renderList();};
+  });
+  const add=document.getElementById('f_add');
+  if(add)add.onclick=()=>{f.ingredientes.push({nome:'',qtd:0,emb:1,preco:0});save();renderEditor();};
+  const del=document.getElementById('f_del');
+  if(del)del.onclick=()=>{
+    if(!confirm('Excluir esta ficha?'))return;
+    db.fichas=db.fichas.filter(x=>x.id!==f.id);
+    db.sel=db.fichas.length?db.fichas[0].id:null;
+    save();renderAll();
+  };
+}
+
+document.getElementById('newficha').onclick=()=>{
+  const nf={id:uid(),nome:'Novo sabor',rendimento:30,peso:70,ingredientes:[{nome:'',qtd:0,emb:1,preco:0}],pricing:defaultPricing()};
+  db.fichas.push(nf);db.sel=nf.id;save();renderAll();
+};
+
+/* EXPORT / IMPORT */
+document.getElementById('export').onclick=()=>{
+  const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='clandestino-fichas.json';a.click();
+};
+document.getElementById('importbtn').onclick=()=>document.getElementById('importfile').click();
+document.getElementById('importfile').onchange=e=>{
+  const file=e.target.files[0];if(!file)return;
+  const rd=new FileReader();
+  rd.onload=()=>{try{const d=JSON.parse(rd.result);if(d.fichas){db=d;db.sel=db.fichas[0]?.id||null;save();renderAll();}}catch(err){alert('Arquivo inválido.');}};
+  rd.readAsText(file);
+};
+
+function renderAll(){renderGlobal();renderList();renderEditor();}
+renderAll();
+</script>
+</body>
+</html>
