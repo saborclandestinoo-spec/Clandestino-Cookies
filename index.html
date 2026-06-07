@@ -226,22 +226,30 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .ical-head{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border);background:var(--bg3);flex-shrink:0;}
 .ical-hcell{padding:8px 4px;text-align:center;font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;}
 .ical-body{flex:1;display:grid;grid-template-columns:repeat(7,1fr);overflow-y:auto;align-content:start;}
-.ical-cell{min-height:80px;padding:5px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);transition:background .12s;}
+.ical-cell{min-height:100px;padding:5px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);transition:background .12s;}
 .ical-cell:nth-child(7n){border-right:none;}
 .ical-cell.empty-day{background:var(--bg);}
 .ical-cell:hover{background:var(--bg3);}
 .ical-cell.drop-over{background:rgba(201,168,76,.08);border-color:var(--gold);}
 .ical-cell.today .ical-daynum{background:var(--gold);color:#fff;border-radius:50%;}
 .ical-daynum{font-size:11px;color:var(--text2);width:20px;height:20px;display:flex;align-items:center;justify-content:center;margin-bottom:3px;}
-.ical-ev{font-size:10px;padding:2px 5px;border-radius:3px;margin-bottom:2px;display:flex;align-items:center;gap:3px;cursor:default;}
-.ical-ev-txt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;}
+.ical-ev{font-size:10px;padding:4px 6px;border-radius:6px;margin-bottom:3px;display:flex;flex-direction:column;gap:3px;cursor:default;border:1px solid rgba(255,255,255,0.06);}
+.ical-ev-top{display:flex;align-items:center;gap:3px;}
+.ical-ev-txt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;font-weight:500;}
 .ical-ev-rm{background:none;border:none;cursor:pointer;font-size:10px;color:inherit;opacity:0;padding:0;line-height:1;flex-shrink:0;}
 .ical-ev:hover .ical-ev-rm{opacity:0.8;}
-.ical-ev.ideia{background:rgba(124,106,247,.18);color:#a78bfa;}
-.ical-ev.gancho{background:rgba(245,158,11,.15);color:#f59e0b;}
-.ical-ev.tendencia{background:rgba(255,255,255,.08);color:#aaa;}
-.ical-ev.abertura{background:rgba(255,255,255,.06);color:#888;}
-.ical-ev.cta{background:var(--goldbg);color:var(--gold);}
+.ical-ev-st{font-size:9px;font-weight:600;padding:1px 6px;border-radius:20px;cursor:pointer;letter-spacing:.3px;text-transform:uppercase;width:fit-content;transition:all .15s;border:none;font-family:'Poppins',sans-serif;}
+.ical-ev-st:hover{opacity:.8;transform:scale(1.05);}
+.ical-ev-st.pensado{background:rgba(255,255,255,.1);color:#888;}
+.ical-ev-st.gravado{background:rgba(255,255,255,.15);color:#bbb;}
+.ical-ev-st.editado{background:var(--goldbg);color:var(--gold);}
+.ical-ev-st.postado{background:rgba(62,207,142,.15);color:#3ecf8e;}
+.ical-ev{background:var(--bg3);color:var(--text2);}
+.ical-ev.ideia{background:rgba(232,25,44,.1);border-color:rgba(232,25,44,.2);}
+.ical-ev.gancho{background:rgba(232,25,44,.08);border-color:rgba(232,25,44,.15);}
+.ical-ev.tendencia{background:rgba(255,255,255,.04);}
+.ical-ev.abertura{background:rgba(255,255,255,.03);}
+.ical-ev.cta{background:var(--goldbg2);border-color:rgba(232,25,44,.15);}
 @media(max-width:900px){.ideas-split{grid-template-columns:1fr;height:auto;}.ideas-panel{height:360px;border-right:none;border-bottom:1px solid var(--border);}}
 /* MOBILE TOPBAR */
 .topbar-mobile{display:none;position:fixed;top:0;left:0;right:0;height:54px;background:var(--bg2);border-bottom:1px solid var(--border);align-items:center;padding:0 16px;gap:12px;z-index:200;}
@@ -538,8 +546,19 @@ function setIdeaSt(e,id,st){
   const idx=ideias.findIndex(i=>i.id===id);
   if(idx<0)return;
   ideias[idx].st=st;
-  saveI();renderI();renderD();
+  saveI();renderI();renderIcal();renderD();
   toast(stLbl2[st]+' ✓');
+}
+function cycleIcalSt(e,id){
+  e.stopPropagation();
+  const idx=ideias.findIndex(i=>i.id===id);
+  if(idx<0)return;
+  const order=['pensado','gravado','editado','postado'];
+  const cur=ideias[idx].st||'pensado';
+  const next=order[(order.indexOf(cur)+1)%order.length];
+  ideias[idx].st=next;
+  saveI();renderIcal();renderI();renderD();
+  toast(stLbl2[next]+' ✓');
 }
 
 function renderD(){
@@ -647,7 +666,17 @@ function renderIcal(){
     const evs=icalEvents[ds]||[];
     h+=`<div class="ical-cell${isT?' today':''}" data-date="${ds}">
       <div class="ical-daynum">${d}</div>
-      ${evs.map(e=>`<div class="ical-ev ${e.tp}"><span class="ical-ev-txt">${esc(e.txt)}</span><button class="ical-ev-rm" onclick="removeIcalEv('${ds}','${e.eid}')">✕</button></div>`).join('')}
+      ${evs.map(e=>{
+        const idea=ideias.find(i=>i.id===e.id)||{};
+        const st=idea.st||'pensado';
+        return `<div class="ical-ev ${e.tp}">
+          <div class="ical-ev-top">
+            <span class="ical-ev-txt" style="color:var(--text)">${esc(e.txt)}</span>
+            <button class="ical-ev-rm" onclick="removeIcalEv('${ds}','${e.eid}')">✕</button>
+          </div>
+          <button class="ical-ev-st ${st}" onclick="cycleIcalSt(event,'${e.id}')">${stLbl2[st]}</button>
+        </div>`;
+      }).join('')}
     </div>`;
   }
   document.getElementById('ical-body').innerHTML=h;
