@@ -200,6 +200,13 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .ist-btn{font-size:10px;font-weight:500;padding:3px 8px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--text3);cursor:pointer;font-family:'Poppins',sans-serif;transition:all .15s;}
 .ist-btn:hover{border-color:var(--gold);color:var(--gold);}
 .ist-btn.ist-active{background:var(--gold);color:#fff;border-color:var(--gold);}
+.alert-banner{background:var(--bg2);border:1px solid var(--gold);border-radius:var(--r);padding:14px 16px;margin-bottom:20px;animation:fadeUp .3s ease;}
+.alert-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-size:13px;font-weight:600;color:var(--gold);}
+.alert-hd button{background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px;}
+.alert-hd button:hover{color:var(--text);}
+.alert-item{display:flex;flex-direction:column;gap:3px;padding:8px 10px;background:var(--bg3);border-radius:var(--rsm);margin-bottom:6px;font-size:12px;}
+.alert-item strong{color:var(--text);}
+.alert-action{color:var(--gold);font-weight:500;font-size:11px;}
 .empty{color:var(--text3);font-size:13px;text-align:center;padding:40px;grid-column:1/-1;}
 .ideas-split{display:grid;grid-template-columns:320px 1fr;gap:0;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;height:calc(100vh - 180px);background:var(--bg2);box-shadow:0 4px 28px rgba(0,0,0,.5);}
 .ideas-panel{display:flex;flex-direction:column;border-right:1px solid var(--border);background:var(--bg3);overflow:hidden;}
@@ -433,6 +440,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
         <div class="fg"><label>Tipo</label><select id="i-tp"><option value="ideia">Ideia Rápida</option><option value="tendencia">Tendência</option><option value="gancho">Gancho Viral</option><option value="abertura">Frase de Abertura</option><option value="cta">CTA</option></select></div>
         <div class="fg"><label>Status</label><select id="i-st"><option value="pensado">Pensado</option><option value="gravado">Gravado</option><option value="editado">Editado</option><option value="postado">Postado</option></select></div>
         <div class="fg"><label>Plataforma</label><select id="i-plat"><option value="instagram">Instagram Reels</option><option value="tiktok">TikTok</option><option value="youtube">YouTube Shorts</option><option value="facebook">Facebook</option></select></div>
+        <div class="fg"><label>Horário de Postagem</label><input type="time" id="i-hora" placeholder="Ex: 18:00"/></div>
         <div class="fg"><label>Tags (vírgula)</label><input type="text" id="i-tags" placeholder="viral, receita, dica"/></div>
       </div>
     </div>
@@ -486,6 +494,7 @@ function openModal(id,data){
       document.getElementById('i-tp').value=data.tp||'ideia';
       document.getElementById('i-st').value=data.st||'pensado';
       document.getElementById('i-plat').value=data.plat||'instagram';
+      document.getElementById('i-hora').value=data.hora||'';
       document.getElementById('i-tags').value=(data.tags||[]).join(', ');
     } else {
       mtitle.textContent='NOVA IDEIA';
@@ -494,6 +503,7 @@ function openModal(id,data){
       document.getElementById('i-tp').value='ideia';
       document.getElementById('i-st').value='pensado';
       document.getElementById('i-plat').value='instagram';
+      document.getElementById('i-hora').value='';
       document.getElementById('i-tags').value='';
     }
   }
@@ -521,11 +531,12 @@ function salvarI(txt,tp,tags){
     tp=document.getElementById('i-tp').value;
     const st=document.getElementById('i-st').value;
     const plat=document.getElementById('i-plat').value;
+    const hora=document.getElementById('i-hora').value;
     tags=document.getElementById('i-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
     if(!txt){toast('Preencha o texto!','err');return;}
     const id=document.getElementById('i-id').value||gid();
     const idx=ideias.findIndex(i=>i.id===id);
-    const obj={id,txt,tp,st,plat,tags,criado:idx>=0?ideias[idx].criado:Date.now()};
+    const obj={id,txt,tp,st,plat,hora,tags,criado:idx>=0?ideias[idx].criado:Date.now()};
     idx>=0?ideias[idx]=obj:ideias.unshift(obj);
     Object.keys(icalEvents).forEach(ds=>{
       icalEvents[ds]=(icalEvents[ds]||[]).map(ev=>ev.id===id?{...ev,txt:obj.txt,tp:obj.tp}:ev);
@@ -669,12 +680,18 @@ function renderIcal(){
       ${evs.map(e=>{
         const idea=ideias.find(i=>i.id===e.id)||{};
         const st=idea.st||'pensado';
-        return `<div class="ical-ev ${e.tp}">
+        const platIcon={instagram:'📸',tiktok:'🎵',youtube:'▶️',facebook:'👤'}[idea.plat||'instagram'];
+        const hora=idea.hora?`<span style="font-size:9px;color:var(--text3);margin-left:2px">⏰${idea.hora}</span>`:'';
+        return `<div class="ical-ev ${e.tp}" onclick="editIdea(event,'${e.id}')" style="cursor:pointer">
           <div class="ical-ev-top">
+            <span style="font-size:11px;margin-right:2px">${platIcon}</span>
             <span class="ical-ev-txt" style="color:var(--text)">${esc(e.txt)}</span>
             <button class="ical-ev-rm" onclick="removeIcalEv('${ds}','${e.eid}')">✕</button>
           </div>
-          <button class="ical-ev-st ${st}" onclick="cycleIcalSt(event,'${e.id}')">${stLbl2[st]}</button>
+          <div style="display:flex;align-items:center;gap:4px;margin-top:2px">
+            <button class="ical-ev-st ${st}" onclick="cycleIcalSt(event,'${e.id}')">${stLbl2[st]}</button>
+            ${hora}
+          </div>
         </div>`;
       }).join('')}
     </div>`;
@@ -776,6 +793,37 @@ async function analisarPerfil(){
 }
 
 renderD();renderCal();renderI();renderIcal();
+// ── ALERTA 1 DIA ANTES ─────────────────────────────────
+checkAlerts();
+function checkAlerts(){
+  const amanha=new Date();amanha.setDate(amanha.getDate()+1);
+  const ds=`${amanha.getFullYear()}-${String(amanha.getMonth()+1).padStart(2,'0')}-${String(amanha.getDate()).padStart(2,'0')}`;
+  const evs=icalEvents[ds]||[];
+  if(!evs.length)return;
+  const msgs={
+    pensado:'⚠️ Ainda não gravado! Grave hoje para postar amanhã.',
+    gravado:'✂️ Falta editar! Finalize a edição hoje.',
+    editado:'✅ Pronto para postar! Lembre de fazer o upload amanhã.',
+    postado:'🎉 Já está postado! Confira o engajamento.'
+  };
+  const items=evs.map(e=>{
+    const idea=ideias.find(i=>i.id===e.id)||{};
+    const st=idea.st||'pensado';
+    const platIcon={instagram:'📸',tiktok:'🎵',youtube:'▶️',facebook:'👤'}[idea.plat||'instagram'];
+    const hora=idea.hora?` às ${idea.hora}`:'';
+    return `<div class="alert-item">
+      <span>${platIcon} <strong>${esc(e.txt)}</strong>${hora}</span>
+      <span class="alert-action">${msgs[st]}</span>
+    </div>`;
+  }).join('');
+  const banner=document.createElement('div');
+  banner.className='alert-banner';
+  banner.innerHTML=`<div class="alert-hd">
+    <span>🔔 Você tem ${evs.length} post${evs.length>1?'s':''} amanhã</span>
+    <button onclick="this.closest('.alert-banner').remove()">✕</button>
+  </div>${items}`;
+  document.getElementById('main').prepend(banner);
+}
 </script>
 </body>
 </html>
