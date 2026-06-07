@@ -286,6 +286,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   .ai-row{flex-direction:column}.cgrid{grid-template-columns:1fr}.igrid{grid-template-columns:1fr}
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -296,7 +297,28 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 </header>
 <div class="overlay" id="overlay"></div>
 
-<aside class="sb" id="sidebar">
+<!-- LOGIN SCREEN -->
+<div id="auth-screen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:9000;align-items:center;justify-content:center;display:flex;">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rlg);padding:36px 32px;width:100%;max-width:400px;box-shadow:0 32px 80px rgba(0,0,0,.8);">
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="width:48px;height:48px;background:var(--gold);border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:26px;color:#fff;margin:0 auto 12px;box-shadow:0 0 24px rgba(232,25,44,.4)">V</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px">VULPIN</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:2px">Content Manager</div>
+    </div>
+    <div id="auth-tabs" style="display:flex;gap:0;margin-bottom:20px;border:1px solid var(--border);border-radius:var(--rsm);overflow:hidden;">
+      <button id="tab-login" onclick="switchAuthTab('login')" style="flex:1;padding:9px;background:var(--gold);color:#fff;border:none;cursor:pointer;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;transition:all .2s">Entrar</button>
+      <button id="tab-signup" onclick="switchAuthTab('signup')" style="flex:1;padding:9px;background:transparent;color:var(--text2);border:none;cursor:pointer;font-family:'Poppins',sans-serif;font-size:13px;transition:all .2s">Cadastrar</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <input id="auth-email" type="email" placeholder="Seu e-mail" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);padding:11px 14px;color:var(--text);font-family:'Poppins',sans-serif;font-size:13px;outline:none;width:100%;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'"/>
+      <input id="auth-pass" type="password" placeholder="Senha" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);padding:11px 14px;color:var(--text);font-family:'Poppins',sans-serif;font-size:13px;outline:none;width:100%;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'" onkeydown="if(event.key==='Enter')doAuth()"/>
+      <div id="auth-error" style="font-size:12px;color:var(--red);display:none;padding:8px 12px;background:var(--redbg);border-radius:var(--rsm)"></div>
+      <button onclick="doAuth()" style="background:var(--gold);color:#fff;border:none;border-radius:var(--rsm);padding:12px;font-family:'Poppins',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;width:100%;" id="auth-btn">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<aside class="sb" id="sidebar" style="display:none">
   <div class="sb-logo">
     <div class="sb-logo-mark">
       <div class="v-icon">V</div>
@@ -315,12 +337,12 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   <div class="sb-user">
     <div class="user-chip">
       <div class="user-av">C</div>
-      <div><div class="user-name">Criador</div><div class="user-plan">PRO ✦</div></div>
+      <div style="flex:1"><div class="user-name">Criador</div><div class="user-plan">PRO ✦</div></div><button onclick="doLogout()" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px;padding:4px" title="Sair">⏻</button>
     </div>
   </div>
 </aside>
 
-<main class="main" id="main">
+<main class="main" id="main" style="display:none">
 
 <!-- DASHBOARD -->
 <section class="page active" id="page-dashboard">
@@ -460,11 +482,99 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 <div class="toast" id="toast"></div>
 
 <script>
-let conteudos=JSON.parse(localStorage.getItem('vlp_c')||'[]');
-let ideias=JSON.parse(localStorage.getItem('vlp_i')||'[]');
+// ── SUPABASE ──────────────────────────────────────────
+const { createClient } = supabase;
+const db = createClient('https://owfqzqrjxbbabninwqg.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93ZnF6cXJqeGJiYWJuaW5ud3FnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MDYzMTMsImV4cCI6MjA5NjM4MjMxM30.4sZsELogAKXZMlG-ds5xsOaavVa2_m5Ut2YJGH1amTU');
+let currentUser = null;
+
+// ── STATE ─────────────────────────────────────────────
+let conteudos=[];
+let ideias=[];
 let calM=new Date().getMonth(),calY=new Date().getFullYear();
-const saveC=()=>localStorage.setItem('vlp_c',JSON.stringify(conteudos));
-const saveI=()=>localStorage.setItem('vlp_i',JSON.stringify(ideias));
+
+// saveI and saveC are now async upserts
+async function saveI(){
+  if(!currentUser)return;
+  // noop — saves happen per-item in salvarI/delI/setIdeaSt
+}
+async function saveC(){}
+
+// ── AUTH HELPERS ──────────────────────────────────────
+let authMode='login';
+function switchAuthTab(mode){
+  authMode=mode;
+  document.getElementById('tab-login').style.background=mode==='login'?'var(--gold)':'transparent';
+  document.getElementById('tab-login').style.color=mode==='login'?'#fff':'var(--text2)';
+  document.getElementById('tab-signup').style.background=mode==='signup'?'var(--gold)':'transparent';
+  document.getElementById('tab-signup').style.color=mode==='signup'?'#fff':'var(--text2)';
+  document.getElementById('auth-btn').textContent=mode==='login'?'Entrar':'Criar conta';
+  document.getElementById('auth-error').style.display='none';
+}
+async function doAuth(){
+  const email=document.getElementById('auth-email').value.trim();
+  const pass=document.getElementById('auth-pass').value;
+  const btn=document.getElementById('auth-btn');
+  const errEl=document.getElementById('auth-error');
+  if(!email||!pass){errEl.textContent='Preencha email e senha.';errEl.style.display='block';return;}
+  btn.textContent='Aguarde...';btn.disabled=true;
+  let res;
+  if(authMode==='login'){
+    res=await db.auth.signInWithPassword({email,password:pass});
+  }else{
+    res=await db.auth.signUp({email,password:pass});
+  }
+  btn.disabled=false;
+  btn.textContent=authMode==='login'?'Entrar':'Criar conta';
+  if(res.error){
+    errEl.textContent=res.error.message;errEl.style.display='block';return;
+  }
+  if(authMode==='signup'&&!res.data.session){
+    errEl.style.background='var(--greenbg)';errEl.style.color='var(--green)';
+    errEl.textContent='Conta criada! Verifique seu email para confirmar.';
+    errEl.style.display='block';return;
+  }
+}
+async function doLogout(){
+  await db.auth.signOut();
+  currentUser=null;ideias=[];icalEvents={};
+  document.getElementById('auth-screen').style.display='flex';
+  document.querySelector('.sb').style.display='none';
+  document.getElementById('main').style.display='none';
+}
+
+// ── LOAD DATA FROM SUPABASE ───────────────────────────
+async function loadData(){
+  const [rI,rE]=await Promise.all([
+    db.from('ideias').select('*').order('criado',{ascending:false}),
+    db.from('ical_events').select('*')
+  ]);
+  ideias=rI.data||[];
+  // rebuild icalEvents object
+  icalEvents={};
+  (rE.data||[]).forEach(e=>{
+    if(!icalEvents[e.date_str])icalEvents[e.date_str]=[];
+    icalEvents[e.date_str].push({eid:e.eid,id:e.idea_id,txt:e.txt,tp:e.tp});
+  });
+  renderD();renderCal();renderI();renderIcal();checkAlerts();
+}
+
+// ── SUPABASE AUTH LISTENER ────────────────────────────
+db.auth.onAuthStateChange((event,session)=>{
+  if(session?.user){
+    currentUser=session.user;
+    document.getElementById('auth-screen').style.display='none';
+    document.querySelector('.sb').style.display='flex';
+    document.getElementById('main').style.display='block';
+    // update user display
+    const name=session.user.email.split('@')[0];
+    document.querySelector('.user-name').textContent=name;
+    loadData();
+  }else{
+    document.getElementById('auth-screen').style.display='flex';
+    document.querySelector('.sb').style.display='none';
+    document.getElementById('main').style.display='none';
+  }
+});
 const gid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const escA=s=>String(s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');
@@ -545,31 +655,47 @@ function salvarI(txt,tp,tags){
     if(!txt){toast('Preencha o texto!','err');return;}
     const id=document.getElementById('i-id').value||gid();
     const idx=ideias.findIndex(i=>i.id===id);
-    const obj={id,txt,tp,st,plat,hora,tags,criado:idx>=0?ideias[idx].criado:Date.now()};
+    const obj={id,txt,tp,st,plat,hora,tags,criado:idx>=0?ideias[idx].criado:Date.now(),user_id:currentUser.id};
     idx>=0?ideias[idx]=obj:ideias.unshift(obj);
     Object.keys(icalEvents).forEach(ds=>{
       icalEvents[ds]=(icalEvents[ds]||[]).map(ev=>ev.id===id?{...ev,txt:obj.txt,tp:obj.tp}:ev);
     });
-    saveI();saveIcal();closeModal('mi');toast('Ideia salva! 💡');renderI();renderIcal();renderD();return;
+    // sync ical_events text in supabase
+    await db.from('ical_events').update({txt:obj.txt,tp:obj.tp}).eq('idea_id',id);
+    await db.from('ideias').upsert(obj);
+    closeModal('mi');toast('Ideia salva! 💡');renderI();renderIcal();renderD();return;
   }
   if(!txt)return;
-  ideias.unshift({id:gid(),txt,tp:tp||'ideia',st:'pensado',plat:'instagram',tags:tags||[],criado:Date.now()});
-  saveI();renderI();renderIcal();renderD();toast('Ideia salva! 💡');
+  const newI={id:gid(),txt,tp:tp||'ideia',st:'pensado',plat:'instagram',tags:tags||[],criado:Date.now(),user_id:currentUser?.id};
+  ideias.unshift(newI);
+  if(currentUser)db.from('ideias').upsert(newI);
+  renderI();renderIcal();renderD();toast('Ideia salva! 💡');
 }
-function delI(id){if(!confirm('Excluir?'))return;ideias=ideias.filter(i=>i.id!==id);saveI();renderI();renderIcal();renderD();toast('Excluída.','err');}
+async function delI(id){
+  if(!confirm('Excluir?'))return;
+  ideias=ideias.filter(i=>i.id!==id);
+  if(currentUser){
+    await db.from('ideias').delete().eq('id',id);
+    await db.from('ical_events').delete().eq('idea_id',id);
+  }
+  // remove from local icalEvents
+  Object.keys(icalEvents).forEach(ds=>{icalEvents[ds]=(icalEvents[ds]||[]).filter(e=>e.id!==id);if(!icalEvents[ds].length)delete icalEvents[ds];});
+  renderI();renderIcal();renderD();toast('Excluída.','err');
+}
 function editIdea(e,id){e.stopPropagation();const idea=ideias.find(i=>i.id===id);if(idea)openModal('mi',idea);}
 const stColors={pensado:'#555',gravado:'#888',editado:'var(--gold)',postado:'#3ecf8e'};
 const stLbl2={pensado:'Pensado',gravado:'Gravado',editado:'Editado',postado:'Postado'};
 const plLbl={instagram:'Instagram',tiktok:'TikTok',youtube:'YT Shorts',facebook:'Facebook'};
-function setIdeaSt(e,id,st){
+async function setIdeaSt(e,id,st){
   e.stopPropagation();
   const idx=ideias.findIndex(i=>i.id===id);
   if(idx<0)return;
   ideias[idx].st=st;
-  saveI();renderI();renderIcal();renderD();
+  if(currentUser)db.from('ideias').update({st}).eq('id',id);
+  renderI();renderIcal();renderD();
   toast(stLbl2[st]+' ✓');
 }
-function cycleIcalSt(e,id){
+async function cycleIcalSt(e,id){
   e.stopPropagation();
   const idx=ideias.findIndex(i=>i.id===id);
   if(idx<0)return;
@@ -577,7 +703,8 @@ function cycleIcalSt(e,id){
   const cur=ideias[idx].st||'pensado';
   const next=order[(order.indexOf(cur)+1)%order.length];
   ideias[idx].st=next;
-  saveI();renderIcal();renderI();renderD();
+  if(currentUser)db.from('ideias').update({st:next}).eq('id',id);
+  renderIcal();renderI();renderD();
   toast(stLbl2[next]+' ✓');
 }
 
@@ -633,10 +760,10 @@ function chMo(d){calM+=d;if(calM>11){calM=0;calY++;}if(calM<0){calM=11;calY--;}r
 
 // IDEAS CALENDAR STATE
 let icalM=new Date().getMonth(), icalY=new Date().getFullYear();
-let icalEvents=JSON.parse(localStorage.getItem('vlp_ical')||'{}');
+let icalEvents={};
 let dragIdeaId=null;
 let iActiveFilter='';
-const saveIcal=()=>localStorage.setItem('vlp_ical',JSON.stringify(icalEvents));
+async function saveIcal(){} // handled per-operation
 const months2=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 
 function isIdeaSched(id){return Object.values(icalEvents).some(a=>Array.isArray(a)&&a.some(e=>e.id===id));}
@@ -725,17 +852,20 @@ function renderIcal(){
       const ds=cell.dataset.date;
       if(!icalEvents[ds])icalEvents[ds]=[];
       if(icalEvents[ds].some(ev=>ev.id===dragIdeaId))return;
-      icalEvents[ds].push({eid:gid(),id:dragIdeaId,txt:idea.txt,tp:idea.tp});
-      saveIcal();renderIcal();renderI();
+      const newEv={eid:gid(),id:dragIdeaId,txt:idea.txt,tp:idea.tp};
+      icalEvents[ds].push(newEv);
+      if(currentUser)db.from('ical_events').insert({id:newEv.eid,eid:newEv.eid,user_id:currentUser.id,date_str:ds,idea_id:dragIdeaId,txt:idea.txt,tp:idea.tp});
+      renderIcal();renderI();
     });
   });
 }
 
-function removeIcalEv(ds,eid){
+async function removeIcalEv(ds,eid){
   if(!icalEvents[ds])return;
   icalEvents[ds]=icalEvents[ds].filter(e=>e.eid!==eid);
   if(!icalEvents[ds].length)delete icalEvents[ds];
-  saveIcal();renderIcal();renderI();
+  if(currentUser)await db.from('ical_events').delete().eq('eid',eid);
+  renderIcal();renderI();
 }
 
 function chMi(d){icalM+=d;if(icalM>11){icalM=0;icalY++;}if(icalM<0){icalM=11;icalY--;}renderIcal();}
@@ -809,9 +939,8 @@ async function analisarPerfil(){
   btn.disabled=false;
 }
 
-renderD();renderCal();renderI();renderIcal();
-// ── ALERTA 1 DIA ANTES ─────────────────────────────────
-checkAlerts();
+// init handled by onAuthStateChange -> loadData()
+// checkAlerts called inside loadData
 function checkAlerts(){
   const amanha=new Date();amanha.setDate(amanha.getDate()+1);
   const ds=`${amanha.getFullYear()}-${String(amanha.getMonth()+1).padStart(2,'0')}-${String(amanha.getDate()).padStart(2,'0')}`;
