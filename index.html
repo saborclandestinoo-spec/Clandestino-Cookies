@@ -213,7 +213,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .icard2-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:5px;}
 .icard2-txt{font-size:12px;color:var(--text);line-height:1.5;flex:1;}
 .icard2-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:12px;display:none;padding:0;line-height:1;}
-.icard2:hover .icard2-del{display:block;}
+.icard2:hover .icard2-del{display:block;opacity:1;}
 .icard2-del:hover{color:var(--red);}
 .icard2-meta{display:flex;align-items:center;gap:6px;}
 .icard2-sched{font-size:10px;color:var(--green);}
@@ -449,7 +449,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 <!-- MODAL IDEIA -->
 <div class="modal-ov" id="mi">
   <div class="modal">
-    <div class="modal-hd"><h2>NOVA IDEIA</h2><button class="modal-x" onclick="closeModal('mi')">✕</button></div>
+    <div class="modal-hd"><h2 id="mi-title">NOVA IDEIA</h2><button class="modal-x" onclick="closeModal('mi')">✕</button></div>
     <div class="modal-body">
       <input type="hidden" id="i-id"/>
       <div class="fgrid">
@@ -506,8 +506,20 @@ function openModal(id,data){
     else{['c-id','c-titulo','c-tema','c-cat','c-data','c-obs'].forEach(f=>document.getElementById(f).value='');document.getElementById('c-plat').value='instagram';document.getElementById('c-st').value='ideia';}
   }
   if(id==='mi'){
-    if(data){document.getElementById('i-id').value=data.id;document.getElementById('i-txt').value=data.txt;document.getElementById('i-tp').value=data.tp;document.getElementById('i-tags').value=(data.tags||[]).join(', ');}
-    else{document.getElementById('i-id').value='';document.getElementById('i-txt').value='';document.getElementById('i-tp').value='ideia';document.getElementById('i-tags').value='';}
+    const mtitle=document.getElementById('mi-title');
+    if(data){
+      mtitle.textContent='EDITAR IDEIA';
+      document.getElementById('i-id').value=data.id;
+      document.getElementById('i-txt').value=data.txt;
+      document.getElementById('i-tp').value=data.tp;
+      document.getElementById('i-tags').value=(data.tags||[]).join(', ');
+    } else {
+      mtitle.textContent='NOVA IDEIA';
+      document.getElementById('i-id').value='';
+      document.getElementById('i-txt').value='';
+      document.getElementById('i-tp').value='ideia';
+      document.getElementById('i-tags').value='';
+    }
   }
 }
 function closeModal(id){document.getElementById(id).classList.remove('active');}
@@ -536,13 +548,18 @@ function salvarI(txt,tp,tags){
     const idx=ideias.findIndex(i=>i.id===id);
     const obj={id,txt,tp,tags,criado:idx>=0?ideias[idx].criado:Date.now()};
     idx>=0?ideias[idx]=obj:ideias.unshift(obj);
-    saveI();closeModal('mi');toast('Ideia salva! 💡');renderI();renderIcal();renderD();return;
+    // sync icalEvents text if idea was edited
+    Object.keys(icalEvents).forEach(ds=>{
+      icalEvents[ds]=(icalEvents[ds]||[]).map(ev=>ev.id===id?{...ev,txt:obj.txt,tp:obj.tp}:ev);
+    });
+    saveI();saveIcal();closeModal('mi');toast('Ideia salva! 💡');renderI();renderIcal();renderD();return;
   }
   if(!txt)return;
   ideias.unshift({id:gid(),txt,tp:tp||'ideia',tags:tags||[],criado:Date.now()});
   saveI();renderI();renderIcal();renderD();toast('Ideia salva! 💡');
 }
 function delI(id){if(!confirm('Excluir?'))return;ideias=ideias.filter(i=>i.id!==id);saveI();renderI();renderIcal();renderD();toast('Excluída.','err');}
+function editIdea(e,id){e.stopPropagation();const idea=ideias.find(i=>i.id===id);if(idea)openModal('mi',idea);}
 
 function renderD(){
   document.getElementById('m-total').textContent=conteudos.length;
@@ -609,9 +626,12 @@ function renderI(){
     <div class="icard2${isIdeaSched(i.id)?' scheduled':''}" draggable="true" data-id="${i.id}">
       <div class="icard2-top">
         <span style="font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;background:${tpColor[i.tp]||'var(--bg4)'};color:${tpTextC[i.tp]||'var(--text2)'}">${tpLbl[i.tp]||i.tp}</span>
-        <button class="icard2-del" onclick="delI('${i.id}')">✕</button>
+        <div style="display:flex;gap:4px">
+          <button class="icard2-del" style="display:block;opacity:0.5" onclick="editIdea(event,'${i.id}')" title="Editar">✏</button>
+          <button class="icard2-del" onclick="delI('${i.id}')" title="Excluir">✕</button>
+        </div>
       </div>
-      <div class="icard2-txt">${esc(i.txt)}</div>
+      <div class="icard2-txt" onclick="editIdea(event,'${i.id}')" style="cursor:pointer">${esc(i.txt)}</div>
       <div class="icard2-meta">
         ${i.tags&&i.tags.length?`<span style="font-size:10px;color:var(--text3)">${i.tags.map(t=>'#'+esc(t)).join(' ')}</span>`:''}
         ${isIdeaSched(i.id)?'<span class="icard2-sched">✓ agendada</span>':''}
