@@ -646,30 +646,38 @@ function renderI(){
   const list=ideias.filter(i=>(i.txt||'').toLowerCase().includes(q)&&(!iActiveFilter||i.tp===iActiveFilter));
   const el=document.getElementById('igrid');
   if(!list.length){el.innerHTML='<div style="color:var(--text3);font-size:13px;text-align:center;padding:24px">Nenhuma ideia encontrada.</div>';return;}
-  const tpColor={ideia:'rgba(232,25,44,.15)',gancho:'rgba(232,25,44,.1)',tendencia:'rgba(255,255,255,.07)',abertura:'rgba(255,255,255,.05)',cta:'rgba(232,25,44,.2)'};
-  const tpTextC={ideia:'#e8192c',gancho:'#e8192c',tendencia:'#aaaaaa',abertura:'#888888',cta:'#e8192c'};
-  el.innerHTML=list.map(i=>`
-    <div class="icard2${isIdeaSched(i.id)?' scheduled':''}" draggable="true" data-id="${i.id}">
-      <div class="icard2-top">
-        <span style="font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;background:${tpColor[i.tp]||'var(--bg4)'};color:${tpTextC[i.tp]||'var(--text2)'}">${tpLbl[i.tp]||i.tp}</span>
-        <div style="display:flex;gap:4px">
-          <button class="icard2-del" style="display:block;opacity:0.5" onclick="editIdea(event,'${i.id}')" title="Editar">✏</button>
-          <button class="icard2-del" onclick="delI('${i.id}')" title="Excluir">✕</button>
+  const platIcon={instagram:'📸',tiktok:'🎵',youtube:'▶️',facebook:'👤'};
+  const platName={instagram:'Instagram',tiktok:'TikTok',youtube:'YT Shorts',facebook:'Facebook'};
+  const tpC={ideia:'rgba(232,25,44,.15)',tendencia:'rgba(255,255,255,.07)',gancho:'rgba(232,25,44,.1)',abertura:'rgba(255,255,255,.05)',cta:'rgba(232,25,44,.18)'};
+  const tpT={ideia:'#e8192c',tendencia:'#888',gancho:'#e8192c',abertura:'#777',cta:'#e8192c'};
+  el.innerHTML=list.map(i=>{
+    const st=i.st||'pensado';
+    const done=st==='postado';
+    const sched=isIdeaSched(i.id);
+    return `<div class="irow${done?' done':''}" draggable="true" data-id="${i.id}">
+      <input type="checkbox" class="irow-check" ${done?'checked':''} onchange="setIdeaSt(event,'${i.id}',this.checked?'postado':'pensado')"/>
+      <div class="irow-body">
+        <div class="irow-txt" onclick="editIdea(event,'${i.id}')">${esc(i.txt)}</div>
+        <div class="irow-meta">
+          <span class="irow-tipo" style="background:${tpC[i.tp]};color:${tpT[i.tp]}">${tpLbl[i.tp]||i.tp}</span>
+          <span class="irow-plat">${platIcon[i.plat||'instagram']} ${platName[i.plat||'instagram']}</span>
+          ${i.hora?`<span class="irow-hora">⏰ ${i.hora}</span>`:''}
+          ${sched?'<span class="irow-sched">✓ agendada</span>':''}
+          ${(i.tags||[]).map(t=>`<span class="irow-tag">#${esc(t)}</span>`).join('')}
+        </div>
+        <div class="irow-stbar">
+          ${['pensado','gravado','editado','postado'].map(s=>`<button class="irow-st${st===s?' ist-active':''}" onclick="setIdeaSt(event,'${i.id}','${s}')">${stLbl2[s]}</button>`).join('')}
         </div>
       </div>
-      <div class="icard2-txt" onclick="editIdea(event,'${i.id}')" style="cursor:pointer">${esc(i.txt)}</div>
-      <div class="icard2-meta">
-        ${i.tags&&i.tags.length?`<span style="font-size:10px;color:var(--text3)">${i.tags.map(t=>'#'+esc(t)).join(' ')}</span>`:''}
-        ${isIdeaSched(i.id)?'<span class="icard2-sched">✓ agendada</span>':''}
+      <div class="irow-actions">
+        <button class="irow-btn" onclick="editIdea(event,'${i.id}')" title="Editar">✏</button>
+        <button class="irow-btn del" onclick="delI('${i.id}')" title="Excluir">✕</button>
       </div>
-      <div class="icard2-stbar">
-        ${['pensado','gravado','editado','postado'].map(s=>`<button class="ist-btn${(i.st||'pensado')===s?' ist-active':''}" onclick="setIdeaSt(event,'${i.id}','${s}')">${stLbl2[s]}</button>`).join('')}
-      </div>
-    </div>`).join('');
-  // bind drag
-  el.querySelectorAll('.irow').forEach(card=>{
-    card.addEventListener('dragstart',e=>{dragIdeaId=card.dataset.id;e.dataTransfer.effectAllowed='copy';});
-    card.addEventListener('dragend',()=>{card.classList.remove('dragging');dragIdeaId=null;});
+    </div>`;
+  }).join('');
+  el.querySelectorAll('.irow').forEach(row=>{
+    row.addEventListener('dragstart',e=>{dragIdeaId=row.dataset.id;e.dataTransfer.effectAllowed='copy';});
+    row.addEventListener('dragend',()=>{dragIdeaId=null;});
   });
 }
 
