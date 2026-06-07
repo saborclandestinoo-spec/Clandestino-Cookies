@@ -196,6 +196,10 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .fg select option{background:var(--bg2);}.fg textarea{resize:vertical;}
 .toast{position:fixed;bottom:24px;right:24px;background:var(--bg2);border:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,.6);border-radius:var(--rsm);padding:11px 16px;font-size:12px;z-index:1000;transform:translateY(12px);opacity:0;transition:all .2s;pointer-events:none;max-width:280px;}
 .toast.show{transform:translateY(0);opacity:1;}.toast.ok{border-color:var(--green);color:var(--green);}.toast.err{border-color:var(--red);color:var(--red);}
+.icard2-stbar{display:flex;gap:3px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);flex-wrap:wrap;}
+.ist-btn{font-size:10px;font-weight:500;padding:3px 8px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--text3);cursor:pointer;font-family:'Poppins',sans-serif;transition:all .15s;}
+.ist-btn:hover{border-color:var(--gold);color:var(--gold);}
+.ist-btn.ist-active{background:var(--gold);color:#fff;border-color:var(--gold);}
 .empty{color:var(--text3);font-size:13px;text-align:center;padding:40px;grid-column:1/-1;}
 .ideas-split{display:grid;grid-template-columns:320px 1fr;gap:0;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;height:calc(100vh - 180px);background:var(--bg2);box-shadow:0 4px 28px rgba(0,0,0,.5);}
 .ideas-panel{display:flex;flex-direction:column;border-right:1px solid var(--border);background:var(--bg3);overflow:hidden;}
@@ -279,7 +283,6 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   <nav class="sb-nav">
     <div class="nav-section">Principal</div>
     <button class="nav-item active" data-pg="dashboard"><span class="nav-icon">▦</span>Dashboard</button>
-    <button class="nav-item" data-pg="conteudos"><span class="nav-icon">◧</span>Conteúdos</button>
     <button class="nav-item" data-pg="calendario"><span class="nav-icon">▦</span>Calendário</button>
     <div class="nav-section">Criação</div>
     <button class="nav-item" data-pg="ideias"><span class="nav-icon">◈</span>Banco de Ideias</button>
@@ -299,44 +302,29 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 <section class="page active" id="page-dashboard">
   <div class="ph">
     <div><div class="ph-eyebrow">Visão Geral</div><div class="ph-title">Dashboard</div><div class="ph-sub">Acompanhe seu desempenho de conteúdo</div></div>
-    <button class="btn-gold" onclick="openModal('mc')">＋ Novo Conteúdo</button>
+    <button class="btn-gold" onclick="openModal('mi')">＋ Nova Ideia</button>
   </div>
   <div class="metrics">
-    <div class="metric m-gold"><div class="metric-num" id="m-total">0</div><div class="metric-label">Total Planejado</div><div class="metric-sub">conteúdos criados</div></div>
-    <div class="metric m-green"><div class="metric-num" id="m-pub">0</div><div class="metric-label">Publicados</div><div class="metric-sub">no ar agora</div></div>
-    <div class="metric m-blue"><div class="metric-num" id="m-pend">0</div><div class="metric-label">Pendentes</div><div class="metric-sub">em produção</div></div>
-    <div class="metric m-orange"><div class="metric-num" id="m-ideas">0</div><div class="metric-label">Banco de Ideias</div><div class="metric-sub">ideias salvas</div></div>
+    <div class="metric m-gold"><div class="metric-num" id="m-total">0</div><div class="metric-label">Total de Ideias</div><div class="metric-sub">no banco</div></div>
+    <div class="metric m-green"><div class="metric-num" id="m-pub">0</div><div class="metric-label">Postados</div><div class="metric-sub">publicados</div></div>
+    <div class="metric m-blue"><div class="metric-num" id="m-pend">0</div><div class="metric-label">Em Produção</div><div class="metric-sub">gravando ou editando</div></div>
+    <div class="metric m-orange"><div class="metric-num" id="m-ideas">0</div><div class="metric-label">Pensados</div><div class="metric-sub">aguardando gravação</div></div>
   </div>
   <div class="dash-grid">
     <div class="card">
-      <div class="card-hd"><h3>Conteúdos Recentes</h3><button class="btn-ghost" onclick="goPage('conteudos')">Ver todos →</button></div>
+      <div class="card-hd"><h3>Ideias Recentes</h3><button class="btn-ghost" onclick="goPage('ideias')">Ver todas →</button></div>
       <div class="recent-list" id="recent-list"><div class="empty">Nenhum conteúdo ainda.</div></div>
     </div>
     <div class="card">
       <div class="card-hd"><h3>Pipeline</h3></div>
       <div class="pipe" id="pipe">
-        <div class="pipe-row"><span class="pipe-dot" style="background:var(--text3)"></span><span class="pipe-label">Ideia</span><div class="pipe-bar-wrap"><div class="pipe-bar-fill" id="pb-ideia" style="background:var(--text3);width:0%"></div></div><span class="pipe-count" id="pc-ideia">0</span></div>
-        <div class="pipe-row"><span class="pipe-dot" style="background:#888"></span><span class="pipe-label">Roteiro</span><div class="pipe-bar-wrap"><div class="pipe-bar-fill" id="pb-roteiro" style="background:#888;width:0%"></div></div><span class="pipe-count" id="pc-roteiro">0</span></div>
-        <div class="pipe-row"><span class="pipe-dot" style="background:#bbb"></span><span class="pipe-label">Gravado</span><div class="pipe-bar-wrap"><div class="pipe-bar-fill" id="pb-gravado" style="background:#bbb;width:0%"></div></div><span class="pipe-count" id="pc-gravado">0</span></div>
+        <div class="pipe-row"><span class="pipe-dot" style="background:#555"></span><span class="pipe-label">Pensado</span><div class="pipe-bar-wrap"><div class="pipe-bar-fill" id="pb-pensado" style="background:#555;width:0%"></div></div><span class="pipe-count" id="pc-pensado">0</span></div>
+        <div class="pipe-row"><span class="pipe-dot" style="background:#888"></span><span class="pipe-label">Gravado</span><div class="pipe-bar-wrap"><div class="pipe-bar-fill" id="pb-gravado" style="background:#888;width:0%"></div></div><span class="pipe-count" id="pc-gravado">0</span></div>
         <div class="pipe-row"><span class="pipe-dot" style="background:var(--gold)"></span><span class="pipe-label">Editado</span><div class="pipe-bar-wrap"><div class="pipe-bar-fill" id="pb-editado" style="background:var(--gold);width:0%"></div></div><span class="pipe-count" id="pc-editado">0</span></div>
-        <div class="pipe-row"><span class="pipe-dot" style="background:var(--green)"></span><span class="pipe-label">Publicado</span><div class="pipe-bar-wrap"><div class="pipe-bar-fill" id="pb-publicado" style="background:var(--green);width:0%"></div></div><span class="pipe-count" id="pc-publicado">0</span></div>
+        <div class="pipe-row"><span class="pipe-dot" style="background:var(--green)"></span><span class="pipe-label">Postado</span><div class="pipe-bar-wrap"><div class="pipe-bar-fill" id="pb-postado" style="background:var(--green);width:0%"></div></div><span class="pipe-count" id="pc-postado">0</span></div>
       </div>
     </div>
   </div>
-</section>
-
-<!-- CONTEÚDOS -->
-<section class="page" id="page-conteudos">
-  <div class="ph">
-    <div><div class="ph-eyebrow">Gestão</div><div class="ph-title">Conteúdos</div><div class="ph-sub">Organize todos os seus vídeos</div></div>
-    <button class="btn-gold" onclick="openModal('mc')">＋ Novo Conteúdo</button>
-  </div>
-  <div class="filters">
-    <input class="s-input" id="sc-q" placeholder="Buscar conteúdos..." oninput="renderC()"/>
-    <select class="s-select" id="sc-st" onchange="renderC()"><option value="">Todos os status</option><option value="ideia">Ideia</option><option value="roteiro">Roteiro</option><option value="gravado">Gravado</option><option value="editado">Editado</option><option value="publicado">Publicado</option></select>
-    <select class="s-select" id="sc-pl" onchange="renderC()"><option value="">Todas as plataformas</option><option value="instagram">Instagram</option><option value="tiktok">TikTok</option><option value="youtube">YouTube Shorts</option><option value="facebook">Facebook</option></select>
-  </div>
-  <div class="cgrid" id="cgrid"><div class="empty">Nenhum conteúdo encontrado.</div></div>
 </section>
 
 <!-- CALENDÁRIO -->
@@ -426,26 +414,6 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 </section>
 </main>
 
-<!-- MODAL CONTEÚDO -->
-<div class="modal-ov" id="mc">
-  <div class="modal">
-    <div class="modal-hd"><h2 id="mc-title">NOVO CONTEÚDO</h2><button class="modal-x" onclick="closeModal('mc')">✕</button></div>
-    <div class="modal-body">
-      <input type="hidden" id="c-id"/>
-      <div class="fgrid">
-        <div class="fg full"><label>Título *</label><input type="text" id="c-titulo" placeholder="Título do vídeo"/></div>
-        <div class="fg"><label>Tema</label><input type="text" id="c-tema" placeholder="Ex: Receitas, Marketing..."/></div>
-        <div class="fg"><label>Categoria</label><input type="text" id="c-cat" placeholder="Ex: Tutorial, Dica..."/></div>
-        <div class="fg"><label>Data de Publicação</label><input type="date" id="c-data"/></div>
-        <div class="fg"><label>Plataforma</label><select id="c-plat"><option value="instagram">Instagram Reels</option><option value="tiktok">TikTok</option><option value="youtube">YouTube Shorts</option><option value="facebook">Facebook</option></select></div>
-        <div class="fg"><label>Status</label><select id="c-st"><option value="ideia">Ideia</option><option value="roteiro">Roteiro</option><option value="gravado">Gravado</option><option value="editado">Editado</option><option value="publicado">Publicado</option></select></div>
-        <div class="fg full"><label>Observações</label><textarea id="c-obs" rows="3" placeholder="Notas, referências, links..."></textarea></div>
-      </div>
-    </div>
-    <div class="modal-ft"><button class="btn-ghost" onclick="closeModal('mc')">Cancelar</button><button class="btn-gold" onclick="salvarC()">Salvar</button></div>
-  </div>
-</div>
-
 <!-- MODAL IDEIA -->
 <div class="modal-ov" id="mi">
   <div class="modal">
@@ -455,6 +423,8 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
       <div class="fgrid">
         <div class="fg full"><label>Conteúdo *</label><textarea id="i-txt" rows="3" placeholder="Descreva a ideia..."></textarea></div>
         <div class="fg"><label>Tipo</label><select id="i-tp"><option value="ideia">Ideia Rápida</option><option value="tendencia">Tendência</option><option value="gancho">Gancho Viral</option><option value="abertura">Frase de Abertura</option><option value="cta">CTA</option></select></div>
+        <div class="fg"><label>Status</label><select id="i-st"><option value="pensado">Pensado</option><option value="gravado">Gravado</option><option value="editado">Editado</option><option value="postado">Postado</option></select></div>
+        <div class="fg"><label>Plataforma</label><select id="i-plat"><option value="instagram">Instagram Reels</option><option value="tiktok">TikTok</option><option value="youtube">YouTube Shorts</option><option value="facebook">Facebook</option></select></div>
         <div class="fg"><label>Tags (vírgula)</label><input type="text" id="i-tags" placeholder="viral, receita, dica"/></div>
       </div>
     </div>
@@ -473,8 +443,7 @@ const saveI=()=>localStorage.setItem('vlp_i',JSON.stringify(ideias));
 const gid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const escA=s=>String(s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');
-const stLbl={ideia:'Ideia',roteiro:'Roteiro',gravado:'Gravado',editado:'Editado',publicado:'Publicado'};
-const plLbl={instagram:'Instagram',tiktok:'TikTok',youtube:'YT Shorts',facebook:'Facebook'};
+
 const tpLbl={ideia:'Ideia',tendencia:'Tendência',gancho:'Gancho',abertura:'Abertura',cta:'CTA'};
 const fmtD=d=>{if(!d)return '';const[y,m,dy]=d.split('-');return `${dy}/${m}/${y}`;};
 
@@ -492,7 +461,7 @@ function goPage(pg){
   document.getElementById('page-'+pg).classList.add('active');
   document.querySelector(`[data-pg="${pg}"]`).classList.add('active');
   sidebar.classList.remove('open');overlay.classList.remove('active');
-  if(pg==='dashboard')renderD();if(pg==='conteudos')renderC();
+  if(pg==='dashboard')renderD();
   if(pg==='calendario')renderCal();
   if(pg==='ideias'){renderI();renderIcal();}
 }
@@ -500,24 +469,23 @@ function goPage(pg){
 // MODAL
 function openModal(id,data){
   document.getElementById(id).classList.add('active');
-  if(id==='mc'){
-    document.getElementById('mc-title').textContent=data?'EDITAR CONTEÚDO':'NOVO CONTEÚDO';
-    if(data){document.getElementById('c-id').value=data.id;document.getElementById('c-titulo').value=data.titulo;document.getElementById('c-tema').value=data.tema||'';document.getElementById('c-cat').value=data.cat||'';document.getElementById('c-data').value=data.data||'';document.getElementById('c-plat').value=data.plat||'instagram';document.getElementById('c-st').value=data.st||'ideia';document.getElementById('c-obs').value=data.obs||'';}
-    else{['c-id','c-titulo','c-tema','c-cat','c-data','c-obs'].forEach(f=>document.getElementById(f).value='');document.getElementById('c-plat').value='instagram';document.getElementById('c-st').value='ideia';}
-  }
   if(id==='mi'){
     const mtitle=document.getElementById('mi-title');
     if(data){
       mtitle.textContent='EDITAR IDEIA';
       document.getElementById('i-id').value=data.id;
       document.getElementById('i-txt').value=data.txt;
-      document.getElementById('i-tp').value=data.tp;
+      document.getElementById('i-tp').value=data.tp||'ideia';
+      document.getElementById('i-st').value=data.st||'pensado';
+      document.getElementById('i-plat').value=data.plat||'instagram';
       document.getElementById('i-tags').value=(data.tags||[]).join(', ');
     } else {
       mtitle.textContent='NOVA IDEIA';
       document.getElementById('i-id').value='';
       document.getElementById('i-txt').value='';
       document.getElementById('i-tp').value='ideia';
+      document.getElementById('i-st').value='pensado';
+      document.getElementById('i-plat').value='instagram';
       document.getElementById('i-tags').value='';
     }
   }
@@ -541,42 +509,61 @@ function delC(id,e){e.stopPropagation();if(!confirm('Excluir?'))return;conteudos
 
 function salvarI(txt,tp,tags){
   if(!arguments.length){
-    txt=document.getElementById('i-txt').value.trim();tp=document.getElementById('i-tp').value;
+    txt=document.getElementById('i-txt').value.trim();
+    tp=document.getElementById('i-tp').value;
+    const st=document.getElementById('i-st').value;
+    const plat=document.getElementById('i-plat').value;
     tags=document.getElementById('i-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
     if(!txt){toast('Preencha o texto!','err');return;}
     const id=document.getElementById('i-id').value||gid();
     const idx=ideias.findIndex(i=>i.id===id);
-    const obj={id,txt,tp,tags,criado:idx>=0?ideias[idx].criado:Date.now()};
+    const obj={id,txt,tp,st,plat,tags,criado:idx>=0?ideias[idx].criado:Date.now()};
     idx>=0?ideias[idx]=obj:ideias.unshift(obj);
-    // sync icalEvents text if idea was edited
     Object.keys(icalEvents).forEach(ds=>{
       icalEvents[ds]=(icalEvents[ds]||[]).map(ev=>ev.id===id?{...ev,txt:obj.txt,tp:obj.tp}:ev);
     });
     saveI();saveIcal();closeModal('mi');toast('Ideia salva! 💡');renderI();renderIcal();renderD();return;
   }
   if(!txt)return;
-  ideias.unshift({id:gid(),txt,tp:tp||'ideia',tags:tags||[],criado:Date.now()});
+  ideias.unshift({id:gid(),txt,tp:tp||'ideia',st:'pensado',plat:'instagram',tags:tags||[],criado:Date.now()});
   saveI();renderI();renderIcal();renderD();toast('Ideia salva! 💡');
 }
 function delI(id){if(!confirm('Excluir?'))return;ideias=ideias.filter(i=>i.id!==id);saveI();renderI();renderIcal();renderD();toast('Excluída.','err');}
 function editIdea(e,id){e.stopPropagation();const idea=ideias.find(i=>i.id===id);if(idea)openModal('mi',idea);}
+const stColors={pensado:'#555',gravado:'#888',editado:'var(--gold)',postado:'#3ecf8e'};
+const stLbl2={pensado:'Pensado',gravado:'Gravado',editado:'Editado',postado:'Postado'};
+const plLbl={instagram:'Instagram',tiktok:'TikTok',youtube:'YT Shorts',facebook:'Facebook'};
+function setIdeaSt(e,id,st){
+  e.stopPropagation();
+  const idx=ideias.findIndex(i=>i.id===id);
+  if(idx<0)return;
+  ideias[idx].st=st;
+  saveI();renderI();renderD();
+  toast(stLbl2[st]+' ✓');
+}
 
 function renderD(){
-  document.getElementById('m-total').textContent=conteudos.length;
-  document.getElementById('m-pub').textContent=conteudos.filter(c=>c.st==='publicado').length;
-  document.getElementById('m-pend').textContent=conteudos.filter(c=>c.st!=='publicado').length;
-  document.getElementById('m-ideas').textContent=ideias.length;
-  const tot=conteudos.length||1;
-  ['ideia','roteiro','gravado','editado','publicado'].forEach(s=>{
-    const cnt=conteudos.filter(c=>c.st===s).length;
+  document.getElementById('m-total').textContent=ideias.length;
+  document.getElementById('m-pub').textContent=ideias.filter(i=>i.st==='postado').length;
+  document.getElementById('m-pend').textContent=ideias.filter(i=>i.st==='gravado'||i.st==='editado').length;
+  document.getElementById('m-ideas').textContent=ideias.filter(i=>i.st==='pensado').length;
+  const tot=ideias.length||1;
+  ['pensado','gravado','editado','postado'].forEach(s=>{
+    const cnt=ideias.filter(i=>i.st===s).length;
     document.getElementById('pc-'+s).textContent=cnt;
     document.getElementById('pb-'+s).style.width=(cnt/tot*100)+'%';
   });
   const el=document.getElementById('recent-list');
-  const rec=conteudos.slice(0,5);
-  if(!rec.length){el.innerHTML='<div class="empty">Nenhum conteúdo ainda.</div>';return;}
-  const barC={ideia:'#444',roteiro:'#666',gravado:'#888',editado:'var(--gold)',publicado:'var(--gold)'};
-  el.innerHTML=rec.map(c=>`<div class="recent-row" onclick="editC('${c.id}',event)"><div class="recent-bar" style="background:${barC[c.st]}"></div><div class="recent-title">${esc(c.titulo)}</div><div class="recent-right"><span class="badge ${c.st}">${stLbl[c.st]}</span><span style="font-size:10px;color:var(--text3)">${plLbl[c.plat]||c.plat}</span></div></div>`).join('');
+  const rec=ideias.slice(0,5);
+  if(!rec.length){el.innerHTML='<div class="empty">Nenhuma ideia ainda.</div>';return;}
+  el.innerHTML=rec.map(i=>`<div class="recent-row" onclick="editIdea(event,'${i.id}')">
+    <div class="recent-bar" style="background:${stColors[i.st]||'#555'}"></div>
+    <div class="recent-title">${esc(i.txt)}</div>
+    <div class="recent-right">
+      <span class="badge ${i.st||'pensado'}" style="background:${stColors[i.st]||'#333'};color:#fff;opacity:.85">${stLbl2[i.st]||'Pensado'}</span>
+      <span style="font-size:10px;color:var(--text3)">${plLbl[i.plat]||''}</span>
+    </div>
+  </div>`).join('');
 }
 
 function renderC(){
@@ -635,6 +622,9 @@ function renderI(){
       <div class="icard2-meta">
         ${i.tags&&i.tags.length?`<span style="font-size:10px;color:var(--text3)">${i.tags.map(t=>'#'+esc(t)).join(' ')}</span>`:''}
         ${isIdeaSched(i.id)?'<span class="icard2-sched">✓ agendada</span>':''}
+      </div>
+      <div class="icard2-stbar">
+        ${['pensado','gravado','editado','postado'].map(s=>`<button class="ist-btn${(i.st||'pensado')===s?' ist-active':''}" onclick="setIdeaSt(event,'${i.id}','${s}')">${stLbl2[s]}</button>`).join('')}
       </div>
     </div>`).join('');
   // bind drag
