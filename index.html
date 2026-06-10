@@ -114,11 +114,11 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .cal-head{display:grid;grid-template-columns:repeat(7,1fr);background:var(--bg3);border-bottom:1px solid var(--border);}
 .cal-hcell{padding:10px;text-align:center;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;}
 .cal-body{display:grid;grid-template-columns:repeat(7,1fr);}
-.cal-cell{min-height:90px;padding:8px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);transition:background .15s;}
+.cal-cell{height:110px;overflow:hidden;padding:8px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);transition:background .15s;}
 .cal-cell:nth-child(7n){border-right:none;}.cal-cell:hover{background:var(--bg3);}
 .cal-day{font-size:12px;font-weight:500;color:var(--text2);width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:4px;}
 .cal-cell.today .cal-day{background:var(--gold);color:#fff;}
-.cal-ev{font-size:10px;padding:2px 6px;border-radius:3px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;}
+.cal-ev{font-size:10px;padding:2px 6px;border-radius:3px;margin-bottom:2px;white-space:normal;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;cursor:pointer;}
 .cal-ev.ideia{background:rgba(68,68,90,.3);color:var(--text2);}.cal-ev.roteiro{background:rgba(255,255,255,.08);color:#aaa;}
 .cal-ev.gravado{background:rgba(255,255,255,.12);color:#ccc;}.cal-ev.editado{background:var(--goldbg);color:var(--gold2);}
 .cal-ev.publicado{background:var(--goldbg);color:var(--gold);}
@@ -242,7 +242,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .ical-head{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border);background:var(--bg3);flex-shrink:0;}
 .ical-hcell{padding:8px 4px;text-align:center;font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;}
 .ical-body{flex:1;display:grid;grid-template-columns:repeat(7,1fr);overflow-y:auto;align-content:start;}
-.ical-cell{min-height:100px;padding:5px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);transition:background .12s;}
+.ical-cell{height:110px;overflow:hidden;padding:5px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);transition:background .12s;}
 .ical-cell:nth-child(7n){border-right:none;}
 .ical-cell.empty-day{background:var(--bg);}
 .ical-cell:hover{background:var(--bg3);}
@@ -251,10 +251,10 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .ical-daynum{font-size:11px;color:var(--text2);width:20px;height:20px;display:flex;align-items:center;justify-content:center;margin-bottom:3px;}
 .ical-ev{font-size:10px;padding:4px 6px;border-radius:6px;margin-bottom:3px;display:flex;flex-direction:column;gap:3px;cursor:default;border:1px solid rgba(255,255,255,0.06);}
 .ical-ev-top{display:flex;align-items:center;gap:3px;}
-.ical-ev-txt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;font-weight:500;}
+.ical-ev-txt{overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;flex:1;font-weight:500;font-size:10px;line-height:1.3;word-break:break-word;white-space:normal;}
 .ical-ev-rm{background:none;border:none;cursor:pointer;font-size:10px;color:inherit;opacity:0;padding:0;line-height:1;flex-shrink:0;}
 .ical-ev:hover .ical-ev-rm{opacity:0.8;}
-.ical-ev-st{font-size:9px;font-weight:600;padding:1px 6px;border-radius:20px;cursor:pointer;letter-spacing:.3px;text-transform:uppercase;width:fit-content;transition:all .15s;border:none;font-family:'Poppins',sans-serif;}
+.ical-ev-st{font-size:8px;font-weight:600;padding:1px 5px;border-radius:20px;cursor:pointer;letter-spacing:.3px;text-transform:uppercase;width:fit-content;transition:all .15s;border:none;font-family:'Poppins',sans-serif;}
 .ical-ev-st:hover{opacity:.8;transform:scale(1.05);}
 .ical-ev-st.pensado{background:rgba(255,255,255,.1);color:#888;}
 .ical-ev-st.gravado{background:rgba(255,255,255,.15);color:#bbb;}
