@@ -632,7 +632,7 @@ document.querySelectorAll('.modal-ov').forEach(o=>o.addEventListener('click',e=>
 
 function toast(msg,type='ok'){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast show ${type}`;setTimeout(()=>t.className='toast',2800);}
 
-function salvarC(){
+async function salvarC(){
   const titulo=document.getElementById('c-titulo').value.trim();
   if(!titulo){toast('Título obrigatório!','err');return;}
   const id=document.getElementById('c-id').value||gid();
@@ -644,7 +644,7 @@ function salvarC(){
 function editC(id,e){e.stopPropagation();const c=conteudos.find(c=>c.id===id);if(c)openModal('mc',c);}
 function delC(id,e){e.stopPropagation();if(!confirm('Excluir?'))return;conteudos=conteudos.filter(c=>c.id!==id);saveC();renderC();renderD();toast('Excluído.','err');}
 
-function salvarI(txt,tp,tags){
+async function salvarI(txt,tp,tags){
   if(!arguments.length){
     txt=document.getElementById('i-txt').value.trim();
     tp=document.getElementById('i-tp').value;
