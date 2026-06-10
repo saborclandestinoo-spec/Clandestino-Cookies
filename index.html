@@ -515,23 +515,45 @@ async function doAuth(){
   const pass=document.getElementById('auth-pass').value;
   const btn=document.getElementById('auth-btn');
   const errEl=document.getElementById('auth-error');
-  if(!email||!pass){errEl.textContent='Preencha email e senha.';errEl.style.display='block';return;}
+  errEl.style.display='none';
+  if(!email||!pass){errEl.style.background='var(--redbg)';errEl.style.color='var(--red)';errEl.textContent='Preencha email e senha.';errEl.style.display='block';return;}
+  if(pass.length<6){errEl.style.background='var(--redbg)';errEl.style.color='var(--red)';errEl.textContent='Senha precisa ter pelo menos 6 caracteres.';errEl.style.display='block';return;}
   btn.textContent='Aguarde...';btn.disabled=true;
-  let res;
-  if(authMode==='login'){
-    res=await db.auth.signInWithPassword({email,password:pass});
-  }else{
-    res=await db.auth.signUp({email,password:pass});
-  }
-  btn.disabled=false;
-  btn.textContent=authMode==='login'?'Entrar':'Criar conta';
-  if(res.error){
-    errEl.textContent=res.error.message;errEl.style.display='block';return;
-  }
-  if(authMode==='signup'&&!res.data.session){
-    errEl.style.background='var(--greenbg)';errEl.style.color='var(--green)';
-    errEl.textContent='Conta criada! Verifique seu email para confirmar.';
-    errEl.style.display='block';return;
+  try{
+    let res;
+    if(authMode==='login'){
+      res=await db.auth.signInWithPassword({email,password:pass});
+    }else{
+      res=await db.auth.signUp({email,password:pass,options:{emailRedirectTo:window.location.href}});
+    }
+    btn.disabled=false;
+    btn.textContent=authMode==='login'?'Entrar':'Criar conta';
+    if(res.error){
+      errEl.style.background='var(--redbg)';errEl.style.color='var(--red)';
+      const msgs={
+        'Invalid login credentials':'Email ou senha incorretos.',
+        'Email not confirmed':'Confirme seu email antes de entrar.',
+        'User already registered':'Email já cadastrado. Tente entrar.',
+        'Password should be at least 6 characters':'Senha precisa ter pelo menos 6 caracteres.',
+      };
+      errEl.textContent=msgs[res.error.message]||res.error.message;
+      errEl.style.display='block';return;
+    }
+    if(authMode==='signup'){
+      if(!res.data.session){
+        errEl.style.background='var(--goldbg)';errEl.style.color='var(--gold)';
+        errEl.textContent='✅ Conta criada! Verifique seu email para confirmar e depois faça login.';
+        errEl.style.display='block';
+        switchAuthTab('login');return;
+      }
+    }
+    // login success — onAuthStateChange handles redirect
+  }catch(e){
+    btn.disabled=false;
+    btn.textContent=authMode==='login'?'Entrar':'Criar conta';
+    errEl.style.background='var(--redbg)';errEl.style.color='var(--red)';
+    errEl.textContent='Erro de conexão: '+e.message;
+    errEl.style.display='block';
   }
 }
 async function doLogout(){
