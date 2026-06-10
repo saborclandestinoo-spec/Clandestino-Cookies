@@ -654,6 +654,8 @@ function chMo(d){calM+=d;if(calM>11){calM=0;calY++;}if(calM<0){calM=11;calY--;}r
 let icalM=new Date().getMonth(), icalY=new Date().getFullYear();
 let icalEvents=JSON.parse(localStorage.getItem('vlp_ical')||'{}');
 let dragIdeaId=null;
+let dragIcalEid=null;
+let dragIcalDs=null;
 let iActiveFilter='';
 function saveIcal(){localStorage.setItem('vlp_ical',JSON.stringify(icalEvents));}
 const months2=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
@@ -718,7 +720,7 @@ function renderIcal(){
         const st=idea.st||'pensado';
         const platIcon={instagram:'📸',tiktok:'🎵',youtube:'▶️',facebook:'👤'}[idea.plat||'instagram'];
         const hora=idea.hora?`<span style="font-size:9px;color:var(--text3);margin-left:2px">⏰${idea.hora}</span>`:'';
-        return `<div class="ical-ev ${e.tp}" onclick="editIdea(event,'${e.id}')" style="cursor:pointer">
+        return `<div class="ical-ev ${e.tp}" draggable="true" data-eid="${e.eid}" data-ds="${ds}" onclick="editIdea(event,'${e.id}')">
           <div class="ical-ev-top">
             <span style="font-size:11px;margin-right:2px">${platIcon}</span>
             <span class="ical-ev-txt" style="color:var(--text)">${esc(e.txt)}</span>
@@ -733,21 +735,52 @@ function renderIcal(){
     </div>`;
   }
   document.getElementById('ical-body').innerHTML=h;
-  // bind drop
+
+  // bind drag on ical events (move between days)
+  document.querySelectorAll('.ical-ev[data-eid]').forEach(ev=>{
+    ev.addEventListener('dragstart',e=>{
+      e.stopPropagation();
+      dragIcalEid=ev.dataset.eid;
+      dragIcalDs=ev.dataset.ds;
+      dragIdeaId=null; // not from bank
+      e.dataTransfer.effectAllowed='move';
+      ev.style.opacity='0.4';
+    });
+    ev.addEventListener('dragend',()=>{ev.style.opacity='';dragIcalEid=null;dragIcalDs=null;});
+  });
+
+  // bind drop on cells
   document.querySelectorAll('.ical-cell[data-date]').forEach(cell=>{
     cell.addEventListener('dragover',e=>{e.preventDefault();cell.classList.add('drop-over');});
     cell.addEventListener('dragleave',()=>cell.classList.remove('drop-over'));
     cell.addEventListener('drop',e=>{
       e.preventDefault();cell.classList.remove('drop-over');
+      const targetDs=cell.dataset.date;
+
+      // MOVE from calendar to another day
+      if(dragIcalEid && dragIcalDs && dragIcalDs!==targetDs){
+        const srcEvs=icalEvents[dragIcalDs]||[];
+        const ev=srcEvs.find(x=>x.eid===dragIcalEid);
+        if(!ev)return;
+        // remove from source
+        icalEvents[dragIcalDs]=srcEvs.filter(x=>x.eid!==dragIcalEid);
+        if(!icalEvents[dragIcalDs].length)delete icalEvents[dragIcalDs];
+        // add to target (new eid to avoid conflicts)
+        if(!icalEvents[targetDs])icalEvents[targetDs]=[];
+        icalEvents[targetDs].push({...ev,eid:gid()});
+        saveIcal();renderIcal();renderI();
+        toast('Post movido! 📅');
+        return;
+      }
+
+      // ADD from bank
       if(!dragIdeaId)return;
       const idea=ideias.find(i=>i.id===dragIdeaId);if(!idea)return;
-      const ds=cell.dataset.date;
-      if(!icalEvents[ds])icalEvents[ds]=[];
-      if(icalEvents[ds].some(ev=>ev.id===dragIdeaId))return;
+      if(!icalEvents[targetDs])icalEvents[targetDs]=[];
+      if(icalEvents[targetDs].some(ev=>ev.id===dragIdeaId))return;
       const newEv={eid:gid(),id:dragIdeaId,txt:idea.txt,tp:idea.tp};
-      icalEvents[ds].push(newEv);
-      saveIcal();
-      renderIcal();renderI();
+      icalEvents[targetDs].push(newEv);
+      saveIcal();renderIcal();renderI();
     });
   });
 }
