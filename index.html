@@ -286,7 +286,13 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   .ai-row{flex-direction:column}.cgrid{grid-template-columns:1fr}.igrid{grid-template-columns:1fr}
 }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+// fallback if jsdelivr fails
+if(typeof supabase === 'undefined'){
+  document.write('<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"><\/script>');
+}
+</script>
 </head>
 <body>
 
@@ -511,6 +517,12 @@ function switchAuthTab(mode){
   document.getElementById('auth-error').style.display='none';
 }
 async function doAuth(){
+  if(typeof supabase==='undefined'||!db){
+    document.getElementById('auth-error').style.background='var(--redbg)';
+    document.getElementById('auth-error').style.color='var(--red)';
+    document.getElementById('auth-error').textContent='Erro: biblioteca Supabase não carregou. Verifique sua conexão e recarregue a página.';
+    document.getElementById('auth-error').style.display='block';return;
+  }
   const email=document.getElementById('auth-email').value.trim();
   const pass=document.getElementById('auth-pass').value;
   const btn=document.getElementById('auth-btn');
@@ -566,17 +578,23 @@ async function doLogout(){
 
 // ── LOAD DATA FROM SUPABASE ───────────────────────────
 async function loadData(){
-  const [rI,rE]=await Promise.all([
-    db.from('ideias').select('*').order('criado',{ascending:false}),
-    db.from('ical_events').select('*')
-  ]);
-  ideias=rI.data||[];
-  // rebuild icalEvents object
-  icalEvents={};
-  (rE.data||[]).forEach(e=>{
-    if(!icalEvents[e.date_str])icalEvents[e.date_str]=[];
-    icalEvents[e.date_str].push({eid:e.eid,id:e.idea_id,txt:e.txt,tp:e.tp});
-  });
+  try{
+    const [rI,rE]=await Promise.all([
+      db.from('ideias').select('*').order('criado',{ascending:false}),
+      db.from('ical_events').select('*')
+    ]);
+    if(rI.error){console.warn('ideias error:',rI.error.message);}
+    if(rE.error){console.warn('ical_events error:',rE.error.message);}
+    ideias=rI.data||[];
+    icalEvents={};
+    (rE.data||[]).forEach(e=>{
+      if(!icalEvents[e.date_str])icalEvents[e.date_str]=[];
+      icalEvents[e.date_str].push({eid:e.eid,id:e.idea_id,txt:e.txt,tp:e.tp});
+    });
+  }catch(e){
+    console.warn('loadData failed:',e.message);
+    ideias=[];icalEvents={};
+  }
   renderD();renderCal();renderI();renderIcal();checkAlerts();
 }
 
