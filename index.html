@@ -182,6 +182,34 @@ html,body{height:100%;font-family:'Poppins',sans-serif;background:var(--bg);colo
 .row-btn.del:hover{background:var(--redbg);color:var(--red);}
 
 /* CALENDAR */
+.notion-list{background:var(--bg2);border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--shadow);margin-top:12px;overflow:hidden;}
+.notion-row{display:flex;align-items:flex-start;gap:0;padding:0;border-bottom:1px solid var(--border);transition:background .1s;position:relative;}
+.notion-row:last-child{border-bottom:none;}
+.notion-row:hover{background:var(--bg3);}
+.notion-row.done .notion-txt{text-decoration:line-through;color:var(--text3);}
+.notion-check-wrap{padding:11px 10px 11px 16px;flex-shrink:0;display:flex;align-items:flex-start;padding-top:13px;}
+.notion-check{width:16px;height:16px;border-radius:3px;border:1.5px solid var(--border2);background:transparent;cursor:pointer;appearance:none;-webkit-appearance:none;position:relative;transition:all .15s;flex-shrink:0;}
+.notion-check:checked{background:var(--blue);border-color:var(--blue);}
+.notion-check:checked::after{content:'';position:absolute;top:2px;left:4px;width:5px;height:8px;border:2px solid #fff;border-top:none;border-left:none;transform:rotate(45deg);}
+.notion-body{flex:1;min-width:0;padding:10px 0 10px 2px;cursor:pointer;}
+.notion-txt{font-size:14px;color:var(--text);line-height:1.55;font-weight:400;word-break:break-word;}
+.notion-txt:hover{color:var(--red);}
+.notion-sub{display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap;}
+.notion-badge{font-size:10px;font-weight:500;padding:2px 8px;border-radius:4px;border:1px solid var(--border);color:var(--text2);background:var(--bg3);}
+.notion-st-row{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;}
+.notion-st-btn{padding:2px 9px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--text3);font-size:11px;font-weight:500;cursor:pointer;font-family:'Poppins',sans-serif;transition:all .12s;}
+.notion-st-btn:hover{border-color:var(--red);color:var(--red);}
+.notion-st-btn.active.pensado{background:var(--bg4);color:var(--text2);border-color:var(--border2);}
+.notion-st-btn.active.gravado{background:var(--bluebg);color:var(--blue);border-color:#bfdbfe;}
+.notion-st-btn.active.editado{background:var(--amberbg);color:var(--amber);border-color:#fde68a;}
+.notion-st-btn.active.postado{background:var(--greenbg);color:var(--green);border-color:#bbf7d0;}
+.notion-actions{display:flex;gap:2px;opacity:0;transition:opacity .15s;flex-shrink:0;padding:10px 12px 10px 6px;padding-top:12px;}
+.notion-row:hover .notion-actions{opacity:1;}
+.notion-btn{width:26px;height:26px;border-radius:5px;border:none;background:transparent;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .12s;font-family:'Poppins',sans-serif;}
+.notion-btn:hover{background:var(--bg4);color:var(--text);}
+.notion-btn.del:hover{background:var(--redbg);color:var(--red);}
+.notion-drag-handle{padding:10px 4px 10px 8px;cursor:grab;color:var(--text3);font-size:13px;opacity:0;display:flex;align-items:flex-start;padding-top:13px;flex-shrink:0;}
+.notion-row:hover .notion-drag-handle{opacity:1;}
 .cal-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
 .cal-month{font-size:15px;font-weight:600;color:var(--text);}
 .cal-nav-btns{display:flex;gap:6px;}
@@ -436,7 +464,7 @@ html,body{height:100%;font-family:'Poppins',sans-serif;background:var(--bg);colo
           <input class="search-input" id="si-q" placeholder="Buscar ideias..." oninput="renderIdeias()"/>
           <button class="btn-primary" onclick="openModal('mi')">+ Nova Ideia</button>
         </div>
-        <div class="filter-bar" id="filter-bar" style="margin-bottom:16px;">
+        <div class="filter-bar" id="filter-bar" style="margin-bottom:0;">
           <button class="f-chip active" data-f="">Todas</button>
           <button class="f-chip" data-f="ideia">Ideia</button>
           <button class="f-chip" data-f="gancho">Gancho</button>
@@ -444,24 +472,7 @@ html,body{height:100%;font-family:'Poppins',sans-serif;background:var(--bg);colo
           <button class="f-chip" data-f="abertura">Abertura</button>
           <button class="f-chip" data-f="cta">CTA</button>
         </div>
-        <div class="card">
-          <div class="card-body" style="padding:0;overflow:auto;">
-            <table class="idea-table">
-              <thead>
-                <tr>
-                  <th style="width:32px"></th>
-                  <th>Ideia / Conteudo</th>
-                  <th>Tipo</th>
-                  <th>Plataforma</th>
-                  <th>Horario</th>
-                  <th>Status</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody id="ideias-tbody"></tbody>
-            </table>
-          </div>
-        </div>
+        <div class="notion-list" id="ideias-list"></div>
       </div>
 
       <!-- CALENDARIO -->
@@ -707,41 +718,41 @@ function renderDash(){
 function renderIdeias(){
   const q=(document.getElementById('si-q')?.value||'').toLowerCase();
   const list=ideias.filter(i=>(i.txt||'').toLowerCase().includes(q)&&(!iFilter||i.tp===iFilter));
-  const tbody=document.getElementById('ideias-tbody');
-  if(!list.length){tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text3)">Nenhuma ideia encontrada</td></tr>`;return;}
-  tbody.innerHTML=list.map(i=>{
+  const el=document.getElementById('ideias-list');
+  if(!list.length){
+    el.innerHTML='<div class="empty" style="padding:48px;text-align:center;color:var(--text3)"><div style="font-size:14px;font-weight:500;margin-bottom:4px">Nenhuma ideia encontrada</div><div style="font-size:12px">Crie sua primeira ideia clicando em + Nova Ideia</div></div>';
+    return;
+  }
+  el.innerHTML=list.map(i=>{
     const st=i.st||'pensado';
     const done=st==='postado';
-    return `<tr>
-      <td><input type="checkbox" class="idea-check" ${done?'checked':''} onchange="setSt('${i.id}',this.checked?'postado':'pensado',event)"/></td>
-      <td class="idea-txt-cell" style="max-width:280px">
-        <div class="idea-txt-main${done?' done':''}" onclick="openModal('mi',ideias.find(x=>x.id==='${i.id}'))">${esc(i.txt)}</div>
-        ${(i.tags||[]).length?`<div class="idea-txt-meta">${i.tags.map(t=>`<span style="font-size:10px;background:var(--bg4);color:var(--text2);padding:1px 6px;border-radius:20px">${esc(t)}</span>`).join('')}</div>`:''}
-      </td>
-      <td><span style="font-size:11px;color:var(--text2)">${TP_LBL[i.tp]||i.tp}</span></td>
-      <td><span style="font-size:11px;color:var(--text2)">${PLAT_NAME[i.plat||'instagram']}</span></td>
-      <td><span style="font-size:11px;color:var(--text2)">${i.hora||'-'}</span></td>
-      <td>
-        <div class="st-btn-group">
-          ${['pensado','gravado','editado','postado'].map(s=>`<button class="st-btn${st===s?' active '+s:''}" onclick="setSt('${i.id}','${s}',event)">${ST_LBL[s]}</button>`).join('')}
+    const meta=[];
+    if(i.tp)meta.push(`<span class="notion-badge">${TP_LBL[i.tp]||i.tp}</span>`);
+    if(i.plat)meta.push(`<span class="notion-badge">${PLAT_NAME[i.plat]||i.plat}</span>`);
+    if(i.hora)meta.push(`<span class="notion-badge">${i.hora}</span>`);
+    (i.tags||[]).forEach(t=>meta.push(`<span class="notion-badge">#${esc(t)}</span>`));
+    return `<div class="notion-row${done?' done':''}" draggable="true" data-id="${i.id}">
+      <div class="notion-drag-handle" title="Arrastar">&#8942;&#8942;</div>
+      <div class="notion-check-wrap">
+        <input type="checkbox" class="notion-check" ${done?'checked':''} onchange="setSt('${i.id}',this.checked?'postado':'pensado',event)"/>
+      </div>
+      <div class="notion-body" onclick="openModal('mi',ideias.find(x=>x.id==='${i.id}'))">
+        <div class="notion-txt">${esc(i.txt)}</div>
+        ${meta.length?`<div class="notion-sub">${meta.join('')}</div>`:''}
+        <div class="notion-st-row">
+          ${['pensado','gravado','editado','postado'].map(s=>`<button class="notion-st-btn${st===s?' active '+s:''}" onclick="setSt('${i.id}','${s}',event)">${ST_LBL[s]}</button>`).join('')}
         </div>
-      </td>
-      <td>
-        <div class="row-actions">
-          <button class="row-btn" onclick="openModal('mi',ideias.find(x=>x.id==='${i.id}'))" title="Editar">&#9998;</button>
-          <button class="row-btn del" onclick="delIdeia('${i.id}')" title="Excluir">&#128465;</button>
-        </div>
-      </td>
-    </tr>`;
+      </div>
+      <div class="notion-actions">
+        <button class="notion-btn" onclick="openModal('mi',ideias.find(x=>x.id==='${i.id}'));event.stopPropagation()" title="Editar">&#9998;</button>
+        <button class="notion-btn del" onclick="delIdeia('${i.id}');event.stopPropagation()" title="Excluir">&#215;</button>
+      </div>
+    </div>`;
   }).join('');
-  // drag from table
-  tbody.querySelectorAll('tr[draggable]').forEach(r=>{
-    r.addEventListener('dragstart',e=>{dragIdeaId=r.dataset.id;dragCalEid=null;e.dataTransfer.effectAllowed='copy';});
-    r.addEventListener('dragend',()=>{dragIdeaId=null;});
-  });
-  // make rows draggable
-  tbody.querySelectorAll('tr').forEach((r,i)=>{
-    if(list[i]){r.draggable=true;r.dataset.id=list[i].id;}
+  // drag from list
+  el.querySelectorAll('.notion-row').forEach(row=>{
+    row.addEventListener('dragstart',e=>{if(e.target.closest('.notion-check-wrap'))return;dragIdeaId=row.dataset.id;dragCalEid=null;e.dataTransfer.effectAllowed='copy';});
+    row.addEventListener('dragend',()=>{dragIdeaId=null;});
   });
 }
 document.getElementById('filter-bar').addEventListener('click',e=>{
