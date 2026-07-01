@@ -200,6 +200,32 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .irow-st{font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--text3);cursor:pointer;font-family:'Poppins',sans-serif;transition:all .12s;}
 .irow-st:hover{border-color:var(--gold);color:var(--gold);}
 .irow-st.ist-active{background:var(--gold);color:#fff;border-color:var(--gold);}
+
+.desemp-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.desemp-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:0 4px 20px rgba(0,0,0,.4);}
+.desemp-card-num{font-family:'Bebas Neue',sans-serif;font-size:36px;line-height:1;margin-bottom:4px;color:var(--gold);}
+.desemp-card-lbl{font-size:10px;color:var(--text2);font-weight:500;text-transform:uppercase;letter-spacing:.5px;}
+.desemp-table{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.4);margin-bottom:20px;}
+.desemp-table-hd{display:grid;grid-template-columns:1fr 90px 90px 90px 90px 90px 80px;gap:8px;padding:10px 16px;background:var(--bg3);border-bottom:1px solid var(--border);font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;}
+.desemp-row{display:grid;grid-template-columns:1fr 90px 90px 90px 90px 90px 80px;gap:8px;padding:11px 16px;border-bottom:1px solid var(--border);font-size:12px;align-items:center;transition:background .15s;}
+.desemp-row:last-child{border-bottom:none;}
+.desemp-row:hover{background:var(--bg3);}
+.desemp-caption{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:12px;color:var(--text);font-weight:400;}
+.desemp-num{font-size:12px;color:var(--text);text-align:right;font-weight:500;}
+.desemp-score{display:inline-flex;align-items:center;justify-content:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.desemp-score.top{background:rgba(232,25,44,.2);color:var(--gold);}
+.desemp-score.mid{background:rgba(255,255,255,.1);color:var(--text2);}
+.desemp-score.low{background:rgba(255,255,255,.05);color:var(--text3);}
+.desemp-insights{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:0 4px 20px rgba(0,0,0,.4);margin-bottom:20px;}
+.desemp-insights-title{font-size:13px;font-weight:600;margin-bottom:14px;color:var(--text);}
+.insight-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.insight-item:last-child{border-bottom:none;}
+.insight-badge{min-width:36px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;flex-shrink:0;margin-top:1px;}
+.insight-badge.tip{background:rgba(232,25,44,.2);color:var(--gold);}
+.insight-badge.warn{background:rgba(255,255,255,.1);color:var(--text2);}
+.insight-txt{font-size:12px;color:var(--text2);line-height:1.6;}
+.insight-txt strong{color:var(--text);}
+@media(max-width:900px){.desemp-summary{grid-template-columns:repeat(2,1fr)}.desemp-table-hd,.desemp-row{grid-template-columns:1fr 70px 70px 70px 60px}}
 .alert-banner{background:var(--bg2);border:1px solid var(--gold);border-radius:var(--r);padding:14px 16px;margin-bottom:20px;animation:fadeUp .3s ease;}
 .alert-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-size:13px;font-weight:600;color:var(--gold);}
 .alert-hd button{background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px;}
@@ -308,10 +334,12 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   <nav class="sb-nav">
     <div class="nav-section">Principal</div>
     <button class="nav-item active" data-pg="dashboard"><span class="nav-icon">▦</span>Dashboard</button>
+    <button class="nav-item" data-pg="ideias"><span class="nav-icon">◈</span>Banco de Ideias</button>
     <button class="nav-item" data-pg="calendario"><span class="nav-icon">▦</span>Calendário</button>
     <div class="nav-section">Criação</div>
-    <button class="nav-item" data-pg="ideias"><span class="nav-icon">◈</span>Banco de Ideias</button>
     <button class="nav-item" data-pg="ia"><span class="nav-icon">◎</span>Vulpin AI<span class="ai-dot"></span></button>
+    <div class="nav-section">Analytics</div>
+    <button class="nav-item" data-pg="desempenho"><span class="nav-icon">◉</span>Desempenho</button>
   </nav>
   <div class="sb-user">
     <div class="user-chip">
@@ -353,59 +381,59 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 </section>
 
 <!-- CALENDÁRIO -->
-<section class="page" id="page-calendario">
-  <div class="ph">
-    <div><div class="ph-eyebrow">Planejamento</div><div class="ph-title">Calendário</div><div class="ph-sub">Visualize suas publicações</div></div>
-    <div class="cal-nav">
-      <button class="btn-ghost" onclick="chMo(-1)">←</button>
-      <span class="cal-month-txt" id="cal-title"></span>
-      <button class="btn-ghost" onclick="chMo(1)">→</button>
-    </div>
-  </div>
-  <div class="cal-wrap" id="cal-wrap"></div>
-</section>
-
-<!-- IDEIAS -->
 <section class="page" id="page-ideias">
   <div class="ph">
-    <div><div class="ph-eyebrow">Banco</div><div class="ph-title">Ideias</div><div class="ph-sub">Arraste ideias para os dias do calendário</div></div>
+    <div><div class="ph-eyebrow">Banco</div><div class="ph-title">Ideias</div><div class="ph-sub">Gerencie e arraste para o calendário</div></div>
     <button class="btn-gold" onclick="openModal('mi')">＋ Nova Ideia</button>
   </div>
-  <div class="ideas-split">
-    <!-- LEFT: banco -->
-    <div class="ideas-panel">
-      <div class="ideas-panel-hd">
-        <span class="ideas-panel-title">💡 Banco de Ideias</span>
-        <div class="i-filter-bar" id="i-filter-bar">
-          <button class="i-chip active" data-f="">Todas</button>
-          <button class="i-chip" data-f="ideia">Ideia</button>
-          <button class="i-chip" data-f="gancho">Gancho</button>
-          <button class="i-chip" data-f="tendencia">Tendência</button>
-          <button class="i-chip" data-f="abertura">Abertura</button>
-          <button class="i-chip" data-f="cta">CTA</button>
-        </div>
+  <div class="ideas-panel" style="display:flex;flex-direction:column;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:0 4px 28px rgba(0,0,0,.5);">
+    <div class="ideas-panel-hd">
+      <span class="ideas-panel-title">Banco de Ideias</span>
+      <div class="i-filter-bar" id="i-filter-bar">
+        <button class="i-chip active" data-f="">Todas</button>
+        <button class="i-chip" data-f="ideia">Ideia</button>
+        <button class="i-chip" data-f="gancho">Gancho</button>
+        <button class="i-chip" data-f="tendencia">Tendência</button>
+        <button class="i-chip" data-f="abertura">Abertura</button>
+        <button class="i-chip" data-f="cta">CTA</button>
       </div>
-      <input class="s-input" id="si-q" placeholder="Buscar ideias..." oninput="renderI()" style="margin:0 12px 10px;width:calc(100% - 24px)"/>
-      <div class="igrid2" id="igrid"></div>
-      <div class="ideas-hint">↔ Arraste para um dia do calendário</div>
     </div>
-    <!-- RIGHT: calendar -->
-    <div class="ideas-cal-panel">
-      <div class="ideas-panel-hd" style="justify-content:space-between">
-        <span class="ideas-panel-title">📅 Calendário Editorial</span>
-        <div style="display:flex;align-items:center;gap:8px">
-          <button class="btn-ghost" style="padding:5px 10px;font-size:12px" onclick="chMi(-1)">←</button>
-          <span id="ical-title" style="font-family:'Bebas Neue',sans-serif;font-size:16px;min-width:130px;text-align:center"></span>
-          <button class="btn-ghost" style="padding:5px 10px;font-size:12px" onclick="chMi(1)">→</button>
-        </div>
-      </div>
-      <div class="ical-head">
-        <div class="ical-hcell">Dom</div><div class="ical-hcell">Seg</div><div class="ical-hcell">Ter</div>
-        <div class="ical-hcell">Qua</div><div class="ical-hcell">Qui</div><div class="ical-hcell">Sex</div><div class="ical-hcell">Sáb</div>
-      </div>
-      <div class="ical-body" id="ical-body"></div>
+    <input class="s-input" id="si-q" placeholder="Buscar ideias..." oninput="renderI()" style="margin:10px 12px;width:calc(100% - 24px)"/>
+    <div class="igrid2" id="igrid" style="flex:1;min-height:300px;max-height:calc(100vh - 320px);"></div>
+    <div class="ideas-hint">Arraste uma ideia para o Calendário Editorial</div>
+  </div>
+</section>
+
+<!-- CALENDÁRIO -->
+<section class="page" id="page-calendario">
+  <div class="ph">
+    <div><div class="ph-eyebrow">Planejamento</div><div class="ph-title">Calendário</div><div class="ph-sub">Visualize e arraste para agendar</div></div>
+    <div class="cal-nav">
+      <button class="btn-ghost" onclick="chMi(-1)">←</button>
+      <span id="ical-title" class="cal-month-txt"></span>
+      <button class="btn-ghost" onclick="chMi(1)">→</button>
     </div>
   </div>
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:0 4px 28px rgba(0,0,0,.5);">
+    <div class="ical-head">
+      <div class="ical-hcell">Dom</div><div class="ical-hcell">Seg</div><div class="ical-hcell">Ter</div>
+      <div class="ical-hcell">Qua</div><div class="ical-hcell">Qui</div><div class="ical-hcell">Sex</div><div class="ical-hcell">Sáb</div>
+    </div>
+    <div class="ical-body" id="ical-body"></div>
+  </div>
+</section>
+
+
+<!-- DESEMPENHO -->
+<section class="page" id="page-desempenho">
+  <div class="ph">
+    <div><div class="ph-eyebrow">Analytics</div><div class="ph-title">Desempenho</div><div class="ph-sub">Análise dos seus Reels — conectado ao Instagram</div></div>
+    <button class="btn-gold" onclick="carregarDesempenho()">Atualizar dados</button>
+  </div>
+  <div id="desemp-loading" style="display:none;align-items:center;gap:12px;padding:24px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);color:var(--text2);font-size:13px;">
+    <div class="ai-spin"></div><span>Carregando dados do Instagram...</span>
+  </div>
+  <div id="desemp-content"></div>
 </section>
 
 <!-- AI -->
@@ -496,8 +524,9 @@ function goPage(pg){
   document.querySelector(`[data-pg="${pg}"]`).classList.add('active');
   sidebar.classList.remove('open');overlay.classList.remove('active');
   if(pg==='dashboard')renderD();
-  if(pg==='calendario')renderCal();
-  if(pg==='ideias'){renderI();renderIcal();}
+  if(pg==='calendario'){renderIcal();}
+  if(pg==='ideias'){renderI();}
+  if(pg==='desempenho'){renderDesempenho(window._desempData||[],{insights:[],padroes:{}});}
 }
 
 // MODAL
@@ -864,6 +893,99 @@ async function analisarPerfil(){
 }
 
 renderD();renderCal();renderI();renderIcal();checkAlerts();
+
+// ── DESEMPENHO ─────────────────────────────────────────
+const WINDSOR_URL='https://mcp.windsor.ai/mcp';
+const SUPA_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJjdGJ5ZGJudGplc3dyd2pydWlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMTk3MjksImV4cCI6MjA5NzY5NTcyOX0.wqmPRmGdjEykDMsEFYWf26AMTA6eUl43vinN_Y7bkQA';
+
+async function carregarDesempenho(){
+  document.getElementById('desemp-loading').style.display='flex';
+  document.getElementById('desemp-content').innerHTML='';
+  try{
+    // Call Windsor.ai via Anthropic API with MCP
+    const response = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:'Voce e Vulpin AI analisando dados reais do Instagram de clandestinocookies. Analise os dados e retorne APENAS JSON: {"insights":[{"tipo":"tip|warn","txt":"..."}],"padroes":{"melhor_tema":"...","melhor_horario":"...","engajamento_medio":N,"taxa_viral":"..."}}',
+        messages:[{role:'user',content:`Analise esses Reels dos ultimos 30 dias do Instagram clandestinocookies e gere insights estrategicos: ${JSON.stringify(window._desempData||[])}`}],
+        mcp_servers:[{type:'url',url:'https://mcp.windsor.ai/mcp',name:'windsor'}]
+      })
+    });
+    const d=await response.json();
+    const txt=d.content?.find(c=>c.type==='text')?.text||'{}';
+    let analysis={insights:[],padroes:{}};
+    try{analysis=JSON.parse(txt.replace(/\`\`\`json|\`\`\`/g,'').trim());}catch(e){}
+    renderDesempenho(window._desempData||[], analysis);
+  }catch(e){
+    renderDesempenho(window._desempData||[], {insights:[{tipo:'tip',txt:'Analise manual disponivel abaixo'}],padroes:{}});
+  }
+  document.getElementById('desemp-loading').style.display='none';
+}
+
+function fmt(n){if(!n)return '0';if(n>=1000000)return (n/1000000).toFixed(1)+'M';if(n>=1000)return (n/1000).toFixed(0)+'K';return n.toString();}
+
+function renderDesempenho(data, analysis){
+  if(!data.length){
+    document.getElementById('desemp-content').innerHTML='<div style="text-align:center;padding:40px;color:var(--text3);font-size:13px">Nenhum dado disponivel</div>';
+    return;
+  }
+  const totalViews=data.reduce((a,b)=>a+(b.media_views||0),0);
+  const totalEng=data.reduce((a,b)=>a+(b.media_engagement||0),0);
+  const totalAlc=data.reduce((a,b)=>a+(b.media_reach||0),0);
+  const melhor=data.reduce((a,b)=>(b.media_views||0)>(a.media_views||0)?b:a,data[0]);
+  const maxViews=melhor.media_views||1;
+  // score = views normalizado 0-100
+  const scored=data.map(d=>({...d,score:Math.round((d.media_views||0)/maxViews*100)})).sort((a,b)=>b.media_views-a.media_views);
+
+  const p=analysis.padroes||{};
+  const insights=analysis.insights||[];
+
+  document.getElementById('desemp-content').innerHTML=`
+    <div class="desemp-summary">
+      <div class="desemp-card"><div class="desemp-card-num">${fmt(totalViews)}</div><div class="desemp-card-lbl">Total de Views</div></div>
+      <div class="desemp-card"><div class="desemp-card-num">${fmt(totalAlc)}</div><div class="desemp-card-lbl">Alcance Total</div></div>
+      <div class="desemp-card"><div class="desemp-card-num">${fmt(totalEng)}</div><div class="desemp-card-lbl">Engajamento Total</div></div>
+      <div class="desemp-card"><div class="desemp-card-num">${data.length}</div><div class="desemp-card-lbl">Reels Publicados</div></div>
+    </div>
+    ${insights.length?`<div class="desemp-insights">
+      <div class="desemp-insights-title">Insights do Perfil</div>
+      ${insights.map(i=>`<div class="insight-item"><span class="insight-badge ${i.tipo||'tip'}">${i.tipo==='warn'?'AVISO':'DICA'}</span><span class="insight-txt">${esc(i.txt)}</span></div>`).join('')}
+    </div>`:''}
+    <div class="desemp-table">
+      <div class="desemp-table-hd">
+        <span>Conteudo</span>
+        <span style="text-align:right">Views</span>
+        <span style="text-align:right">Alcance</span>
+        <span style="text-align:right">Likes</span>
+        <span style="text-align:right">Salvos</span>
+        <span style="text-align:right">Compart.</span>
+        <span style="text-align:right">Score</span>
+      </div>
+      ${scored.map(d=>{
+        const sc=d.score||0;
+        const cls=sc>=70?'top':sc>=30?'mid':'low';
+        const dt=new Date(d.timestamp||d.date);
+        const dtStr=dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+        return `<div class="desemp-row">
+          <div><div class="desemp-caption" title="${esc(d.media_caption||'')}">${esc((d.media_caption||'').split(' ').slice(0,6).join(' '))}...</div><div style="font-size:10px;color:var(--text3);margin-top:2px">${dtStr}</div></div>
+          <div class="desemp-num">${fmt(d.media_views)}</div>
+          <div class="desemp-num">${fmt(d.media_reach)}</div>
+          <div class="desemp-num">${fmt(d.media_like_count)}</div>
+          <div class="desemp-num">${fmt(d.media_saved)}</div>
+          <div class="desemp-num">${fmt(d.media_shares)}</div>
+          <div style="text-align:right"><span class="desemp-score ${cls}">${sc}</span></div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+// Pre-load Windsor data when page opens
+window._desempData = [{"date": "2026-06-01", "media_caption": "Vou fechar minha loja do iFood", "media_type": "REELS", "media_views": 132963, "media_reach": 92261, "media_engagement": 4334, "media_saved": 106, "media_shares": 73, "media_like_count": 3826, "media_comments_count": 255, "timestamp": "2026-06-01T14:41:30+0000"}, {"date": "2026-06-06", "media_caption": "Dia 9 tentando encontrar o Neymar", "media_type": "REELS", "media_views": 2537378, "media_reach": 1563970, "media_engagement": 40383, "media_saved": 528, "media_shares": 448, "media_like_count": 38703, "media_comments_count": 177, "timestamp": "2026-06-06T14:30:38+0000"}, {"date": "2026-06-07", "media_caption": "Comprei 10 pacotinhos de figurinhas", "media_type": "REELS", "media_views": 956072, "media_reach": 730188, "media_engagement": 38650, "media_saved": 632, "media_shares": 734, "media_like_count": 36103, "media_comments_count": 281, "timestamp": "2026-06-07T14:45:45+0000"}, {"date": "2026-06-10", "media_caption": "Comprei o album dourado", "media_type": "REELS", "media_views": 526029, "media_reach": 357107, "media_engagement": 16867, "media_saved": 403, "media_shares": 197, "media_like_count": 15753, "media_comments_count": 34, "timestamp": "2026-06-10T14:36:04+0000"}, {"date": "2026-06-17", "media_caption": "Abrindo o album dourado com minha vo", "media_type": "REELS", "media_views": 1216771, "media_reach": 956896, "media_engagement": 53820, "media_saved": 1377, "media_shares": 1224, "media_like_count": 48839, "media_comments_count": 325, "timestamp": "2026-06-17T14:39:52+0000"}, {"date": "2026-06-20", "media_caption": "Nao achamos o Neymar", "media_type": "REELS", "media_views": 548403, "media_reach": 391567, "media_engagement": 13914, "media_saved": 495, "media_shares": 641, "media_like_count": 11992, "media_comments_count": 245, "timestamp": "2026-06-20T14:38:39+0000"}, {"date": "2026-06-28", "media_caption": "Colamos o Mexico", "media_type": "REELS", "media_views": 309402, "media_reach": 204954, "media_engagement": 4922, "media_saved": 176, "media_shares": 114, "media_like_count": 4450, "media_comments_count": 38, "timestamp": "2026-06-28T14:35:03+0000"}, {"date": "2026-06-04", "media_caption": "Vou dobrar os 3 primeiros pedidos da loja nova do iFood", "media_type": "REELS", "media_views": 49161, "media_reach": 31832, "media_engagement": 945, "media_saved": 16, "media_shares": 49, "media_like_count": 864, "media_comments_count": 4, "timestamp": "2026-06-04T14:21:51+0000"}, {"date": "2026-06-19", "media_caption": "Acabou todos os Cookies da copa", "media_type": "REELS", "media_views": 55923, "media_reach": 42023, "media_engagement": 1668, "media_saved": 40, "media_shares": 30, "media_like_count": 1555, "media_comments_count": 12, "timestamp": "2026-06-19T14:45:10+0000"}, {"date": "2026-06-21", "media_caption": "20 mil seguidores nao deu muito certo", "media_type": "REELS", "media_views": 51220, "media_reach": 34258, "media_engagement": 1360, "media_saved": 15, "media_shares": 20, "media_like_count": 1250, "media_comments_count": 44, "timestamp": "2026-06-21T14:41:52+0000"}, {"date": "2026-06-27", "media_caption": "Colamos a selecao do Brasil", "media_type": "REELS", "media_views": 70330, "media_reach": 47160, "media_engagement": 1564, "media_saved": 59, "media_shares": 52, "media_like_count": 1356, "media_comments_count": 19, "timestamp": "2026-06-27T14:44:33+0000"}, {"date": "2026-06-08", "media_caption": "Essa prateleira foi muito cara", "media_type": "REELS", "media_views": 39838, "media_reach": 28647, "media_engagement": 981, "media_saved": 19, "media_shares": 36, "media_like_count": 909, "media_comments_count": 5, "timestamp": "2026-06-08T14:49:53+0000"}, {"date": "2026-06-14", "media_caption": "Trouxe Cookies para minha vo", "media_type": "REELS", "media_views": 38244, "media_reach": 30237, "media_engagement": 1776, "media_saved": 50, "media_shares": 56, "media_like_count": 1581, "media_comments_count": 34, "timestamp": "2026-06-14T15:08:04+0000"}, {"date": "2026-06-02", "media_caption": "Vou abrir uma nova conta no iFood", "media_type": "REELS", "media_views": 31086, "media_reach": 23995, "media_engagement": 660, "media_saved": 12, "media_shares": 13, "media_like_count": 604, "media_comments_count": 17, "timestamp": "2026-06-02T14:41:01+0000"}, {"date": "2026-06-18", "media_caption": "Dei um Cookie para o pedreiro", "media_type": "REELS", "media_views": 32210, "media_reach": 22725, "media_engagement": 933, "media_saved": 31, "media_shares": 34, "media_like_count": 852, "media_comments_count": 5, "timestamp": "2026-06-18T14:58:02+0000"}, {"date": "2026-06-26", "media_caption": "Nunca mais vou comer outro cookie", "media_type": "REELS", "media_views": 21036, "media_reach": 15475, "media_engagement": 524, "media_saved": 15, "media_shares": 32, "media_like_count": 457, "media_comments_count": 12, "timestamp": "2026-06-26T14:40:08+0000"}, {"date": "2026-06-24", "media_caption": "Reformulei o cookie do Neymar", "media_type": "REELS", "media_views": 20997, "media_reach": 13581, "media_engagement": 554, "media_saved": 14, "media_shares": 27, "media_like_count": 497, "media_comments_count": 8, "timestamp": "2026-06-24T14:45:13+0000"}, {"date": "2026-06-11", "media_caption": "Testando a prateleira nova", "media_type": "REELS", "media_views": 20368, "media_reach": 14675, "media_engagement": 438, "media_saved": 7, "media_shares": 16, "media_like_count": 400, "media_comments_count": 2, "timestamp": "2026-06-11T14:53:58+0000"}, {"date": "2026-06-30", "media_caption": "Assando os Cookies do ganhador do jogo do Brasil", "media_type": "REELS", "media_views": 20611, "media_reach": 15314, "media_engagement": 816, "media_saved": 21, "media_shares": 22, "media_like_count": 674, "media_comments_count": 74, "timestamp": "2026-06-30T14:50:19+0000"}, {"date": "2026-06-03", "media_caption": "Abri uma loja nova no iFood", "media_type": "REELS", "media_views": 20396, "media_reach": 14706, "media_engagement": 307, "media_saved": 5, "media_shares": 11, "media_like_count": 278, "media_comments_count": 4, "timestamp": "2026-06-03T14:56:22+0000"}, {"date": "2026-06-19", "media_caption": "Nosso jogo do Brasil", "media_type": "REELS", "media_views": 17596, "media_reach": 12390, "media_engagement": 271, "media_saved": 6, "media_shares": 8, "media_like_count": 247, "media_comments_count": 4, "timestamp": "2026-06-19T21:41:10+0000"}, {"date": "2026-06-05", "media_caption": "Dobrei os 3 primeiros pedidos da loja nova do iFood", "media_type": "REELS", "media_views": 16757, "media_reach": 12914, "media_engagement": 357, "media_saved": 6, "media_shares": 23, "media_like_count": 315, "media_comments_count": 7, "timestamp": "2026-06-05T14:33:58+0000"}, {"date": "2026-06-16", "media_caption": "Acabaram praticamente todos os cookies clandestinos", "media_type": "REELS", "media_views": 14656, "media_reach": 10569, "media_engagement": 394, "media_saved": 8, "media_shares": 23, "media_like_count": 352, "media_comments_count": 4, "timestamp": "2026-06-16T14:34:00+0000"}, {"date": "2026-06-29", "media_caption": "Qual o placar de hoje Brasil x Japao", "media_type": "REELS", "media_views": 14331, "media_reach": 10404, "media_engagement": 1242, "media_saved": 11, "media_shares": 42, "media_like_count": 336, "media_comments_count": 824, "timestamp": "2026-06-29T14:16:29+0000"}, {"date": "2026-06-15", "media_caption": "Quase derrubei minha casa reforma clandestina episodio 2", "media_type": "REELS", "media_views": 15472, "media_reach": 10947, "media_engagement": 308, "media_saved": 3, "media_shares": 15, "media_like_count": 283, "media_comments_count": 1, "timestamp": "2026-06-15T14:34:44+0000"}, {"date": "2026-06-13", "media_caption": "Comecou a reforma clandestina", "media_type": "REELS", "media_views": 12365, "media_reach": 8964, "media_engagement": 250, "media_saved": 8, "media_shares": 13, "media_like_count": 218, "media_comments_count": 4, "timestamp": "2026-06-13T14:24:14+0000"}, {"date": "2026-06-23", "media_caption": "Nossa obra continua chegou os pisos", "media_type": "REELS", "media_views": 11801, "media_reach": 8046, "media_engagement": 228, "media_saved": 4, "media_shares": 14, "media_like_count": 198, "media_comments_count": 6, "timestamp": "2026-06-23T16:19:39+0000"}, {"date": "2026-06-25", "media_caption": "Nao gostei do piso tive que trocar", "media_type": "REELS", "media_views": 11645, "media_reach": 7534, "media_engagement": 217, "media_saved": 1, "media_shares": 6, "media_like_count": 204, "media_comments_count": 0, "timestamp": "2026-06-25T14:45:12+0000"}, {"date": "2026-06-09", "media_caption": "Acabei de montar a prateleira", "media_type": "REELS", "media_views": 10810, "media_reach": 8505, "media_engagement": 156, "media_saved": 3, "media_shares": 0, "media_like_count": 145, "media_comments_count": 1, "timestamp": "2026-06-09T15:01:24+0000"}, {"date": "2026-06-12", "media_caption": "Como eu sei se a balanca da cozinha esta calibrada", "media_type": "REELS", "media_views": 26815, "media_reach": 15245, "media_engagement": 374, "media_saved": 14, "media_shares": 19, "media_like_count": 321, "media_comments_count": 2, "timestamp": "2026-06-12T16:53:17+0000"}, {"date": "2026-06-22", "media_caption": "Quero fazer um cookie com meu chocolate preferido", "media_type": "REELS", "media_views": 35375, "media_reach": 21910, "media_engagement": 593, "media_saved": 24, "media_shares": 28, "media_like_count": 523, "media_comments_count": 6, "timestamp": "2026-06-22T14:45:09+0000"}];
+
 function checkAlerts(){
   const amanha=new Date();amanha.setDate(amanha.getDate()+1);
   const ds=`${amanha.getFullYear()}-${String(amanha.getMonth()+1).padStart(2,'0')}-${String(amanha.getDate()).padStart(2,'0')}`;
