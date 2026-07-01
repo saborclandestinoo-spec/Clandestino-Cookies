@@ -526,7 +526,7 @@ function goPage(pg){
   if(pg==='dashboard')renderD();
   if(pg==='calendario'){renderIcal();}
   if(pg==='ideias'){renderI();}
-  if(pg==='desempenho'){renderDesempenho(window._desempData||[],{insights:[],padroes:{}});}
+  if(pg==='desempenho'){carregarDesempenho();}
 }
 
 // MODAL
@@ -899,30 +899,19 @@ const WINDSOR_URL='https://mcp.windsor.ai/mcp';
 const SUPA_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJjdGJ5ZGJudGplc3dyd2pydWlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMTk3MjksImV4cCI6MjA5NzY5NTcyOX0.wqmPRmGdjEykDMsEFYWf26AMTA6eUl43vinN_Y7bkQA';
 
 async function carregarDesempenho(){
-  document.getElementById('desemp-loading').style.display='flex';
+  const loadEl=document.getElementById('desemp-loading');
+  if(loadEl)loadEl.style.display='flex';
   document.getElementById('desemp-content').innerHTML='';
-  try{
-    // Call Windsor.ai via Anthropic API with MCP
-    const response = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        system:'Voce e Vulpin AI analisando dados reais do Instagram de clandestinocookies. Analise os dados e retorne APENAS JSON: {"insights":[{"tipo":"tip|warn","txt":"..."}],"padroes":{"melhor_tema":"...","melhor_horario":"...","engajamento_medio":N,"taxa_viral":"..."}}',
-        messages:[{role:'user',content:`Analise esses Reels dos ultimos 30 dias do Instagram clandestinocookies e gere insights estrategicos: ${JSON.stringify(window._desempData||[])}`}],
-        mcp_servers:[{type:'url',url:'https://mcp.windsor.ai/mcp',name:'windsor'}]
-      })
-    });
-    const d=await response.json();
-    const txt=d.content?.find(c=>c.type==='text')?.text||'{}';
-    let analysis={insights:[],padroes:{}};
-    try{analysis=JSON.parse(txt.replace(/\`\`\`json|\`\`\`/g,'').trim());}catch(e){}
-    renderDesempenho(window._desempData||[], analysis);
-  }catch(e){
-    renderDesempenho(window._desempData||[], {insights:[{tipo:'tip',txt:'Analise manual disponivel abaixo'}],padroes:{}});
-  }
-  document.getElementById('desemp-loading').style.display='none';
+  const data=window._desempData||[];
+  const insights=[
+    {tipo:'tip',txt:'Conteudo com Neymar e figurinhas da copa gerou 10x mais views que a media. Tendencias nacionais amplificam seu alcance.'},
+    {tipo:'tip',txt:'Videos com familia (vo) tem engajamento 3x maior. Conteudo pessoal e emocional conecta muito com sua audiencia.'},
+    {tipo:'tip',txt:'Series de continuidade funcionam: iFood parte 1, 2, 3 manteve audiencia engajada ao longo dos dias.'},
+    {tipo:'warn',txt:'Conteudo de produto puro (prateleira, reforma) tem media 15K views vs 500K dos temas virais. Misture tendencias ao produto.'},
+    {tipo:'tip',txt:'Horario ideal 14h-15h teve melhor desempenho. Mantenha consistencia nesse horario.'}
+  ];
+  renderDesempenho(data,{insights});
+  if(loadEl)loadEl.style.display='none';
 }
 
 function fmt(n){if(!n)return '0';if(n>=1000000)return (n/1000000).toFixed(1)+'M';if(n>=1000)return (n/1000).toFixed(0)+'K';return n.toString();}
@@ -1014,25 +1003,6 @@ function checkAlerts(){
     <button onclick="this.closest('.alert-banner').remove()">✕</button>
   </div>${items}`;
   document.getElementById('main').prepend(banner);
-}
-</script>
-
-<script>
-// Override carregarDesempenho — sem fetch externo (CORS bloqueado)
-async function carregarDesempenho(){
-  const loadEl = document.getElementById('desemp-loading');
-  if(loadEl) loadEl.style.display='flex';
-  document.getElementById('desemp-content').innerHTML='';
-  const data = window._desempData||[];
-  const insights = [
-    {"tipo":"tip","txt":"Conteudo com Neymar e figurinhas da copa gerou 10x mais views que a media. Tendencias nacionais amplificam seu alcance."},
-    {"tipo":"tip","txt":"Videos com familia (vo) tem engajamento 3x maior. Conteudo pessoal e emocional conecta muito com sua audiencia."},
-    {"tipo":"tip","txt":"Series de continuidade funcionam: iFood parte 1, 2, 3 manteve audiencia engajada ao longo dos dias."},
-    {"tipo":"warn","txt":"Conteudo de produto puro (prateleira, reforma) tem media 15K views vs 500K dos temas virais. Misture tendencias ao produto."},
-    {"tipo":"tip","txt":"Horario ideal 14h-15h teve melhor desempenho. Mantenha consistencia nesse horario."}
-  ];
-  renderDesempenho(data, {insights});
-  if(loadEl) loadEl.style.display='none';
 }
 </script>
 </body>
