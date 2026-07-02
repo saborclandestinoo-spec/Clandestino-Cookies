@@ -196,13 +196,13 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .fg select option{background:var(--bg2);}.fg textarea{resize:vertical;}
 .toast{position:fixed;bottom:24px;right:24px;background:var(--bg2);border:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,.6);border-radius:var(--rsm);padding:11px 16px;font-size:12px;z-index:1000;transform:translateY(12px);opacity:0;transition:all .2s;pointer-events:none;max-width:280px;}
 .toast.show{transform:translateY(0);opacity:1;}.toast.ok{border-color:var(--green);color:var(--green);}.toast.err{border-color:var(--red);color:var(--red);}
-.notion-bank{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:0 4px 28px rgba(0,0,0,.4);margin-bottom:24px;}
+.notion-bank{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:0 4px 28px rgba(0,0,0,.4);margin-bottom:24px;display:flex;flex-direction:column;}
 .notion-bank-toolbar{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border);flex-wrap:wrap;background:var(--bg3);}
 .i-filter-bar{display:flex;gap:4px;flex-wrap:wrap;}
 .i-chip{font-size:10px;padding:3px 8px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-family:'Poppins',sans-serif;transition:all .15s;}
 .i-chip:hover{border-color:var(--gold);color:var(--gold);}
 .i-chip.active{background:var(--goldbg);color:var(--gold2);border-color:var(--gold);}
-.notion-list{display:flex;flex-direction:column;}
+.notion-list{overflow-y:auto;max-height:580px;display:flex;flex-direction:column;}
 .notion-row{display:flex;align-items:flex-start;border-bottom:1px solid var(--border);transition:background .1s;user-select:none;}
 .notion-row:last-child{border-bottom:none;}
 .notion-row:hover{background:var(--bg3);}
